@@ -6,7 +6,10 @@
   vars:
     dest_path: "{{ lookup('env', 'HOME') }}/workspace"
     k3d_app: "/usr/local/bin/k3d"
+    cluster_name: "cluster-pi5"
+    cluster_file: "cluster.yml"
     k8s_file: "nginx-svc-deploy.yml"
+
   become: true
   tasks:
     # enable cgroup memory
@@ -82,13 +85,21 @@
       file: 
         path: /tmp/k3d-installer.sh 
         state: absent
-
+    # create k3d cluster
     - name: Check if k3d cluster is exist
-      shell: "k3d cluster list | grep -v NAME | awk {'print $1'}"
-      register: k3d_output
-    - name: Print k3d result
+      shell: "k3d cluster list | grep -w '{{ cluster_name }}'"
+      register: k3d_cluster
+    - name: Create k3d cluster
+      shell: "k3d cluster create --config {{ dest_path }}/{{ cluster_file }}"
+      when: not k3d_cluster.rc == 0 # echo $?
+    - name: debug
       debug:
-        msg: "{{ k3d_output.stdout }}"
+        msg: "{{ lookup('env', 'HOME') }}/.kube/config >> {{ playbook_dir }}/k3d-kube-config"
+    - name: Copy kube config to local
+      fetch:
+        src: "{{ lookup('env', 'HOME') }}/.kube/config"
+        dest: "{{ playbook_dir }}/k3d-kube-config"
+        flat: yes
 
   handlers:
     - name: reboot pi5
