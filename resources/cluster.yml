@@ -23,15 +23,13 @@ env:
       - server:0
 volumes: # repeatable flags are represented as YAML lists
   # attache SSD to agent 0, sync disk (backup) to agent 1, data disk to all agents
-  - volume: /media/bill/Data-4TB:/data # same as `--volume '/my/host/path:/path/in/node@server:0;agent:*'`
-    nodeFilters:
-      - agent:*
-  - volume: /media/bill/SSD-DATA:/ssd
+  # same as `--volume '/my/host/path:/path/in/node@server:0;agent:*'`
+  - volume: /media/bill/SSD-DATA/k3dvol:/ssd
     nodeFilters:
       - agent:0
-  - volume: /media/bill/Sync-4TB:/sync
+  - volume: /media/bill/Data-4TB/k3dvol:/data
     nodeFilters:
-      - agent:1
+      - agent:*
 registries:
   create:
     name: pi-5.local

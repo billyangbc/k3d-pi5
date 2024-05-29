@@ -85,8 +85,8 @@
       file: 
         path: /tmp/k3d-installer.sh 
         state: absent
-    # create k3d cluster if not existing
-    - name: Check if k3d cluster is existing
+    # check if cluster existing
+    - name: Check if k3d cluster {{ cluster_name }} is existing
       shell: |
         k3d cluster list | grep -w '{{ cluster_name }}'
       register: k3d_cluster
@@ -94,20 +94,24 @@
     - name: debug k3d_cluster
       debug:
         msg: "k3d_cluster.rc = {{ k3d_cluster.rc }}"
-    - name: Create k3d cluster
+    # create cluster if not existing
+    - name: Create k3d cluster {{ cluster_name }}
       shell:
         cmd: |
-          echo "Start creating cluster with config file ..."
           k3d cluster create --config {{ dest_path }}/{{ cluster_file }}
       when: k3d_cluster.rc == 1 # echo $?
+    # restart the cluster if existing
+    - name: Restart k3d cluster {{ cluster_name }}
+      shell: |
+        k3d cluster stop {{ cluster_name }} && k3d cluster start {{ cluster_name }}
+      when: k3d_cluster.rc == 0
+    - name: Pause for 10 seconds for service start
+      pause:
+        seconds: 10
     # make sure the kube-config file has content (avoid to get empty file)
     - name: Generate kube-config file
       shell:
         cmd: k3d kubeconfig get --all > {{ lookup('env', 'HOME') }}/.kube/config
-      when: k3d_cluster.rc == 1
-    - name: Pause for 10 seconds for service start
-      pause:
-        seconds: 10
       when: k3d_cluster.rc == 1
     # create nginx as loadbalance
     - name: Create nginx loadbalancer
@@ -115,7 +119,6 @@
         kubectl apply -f {{ dest_path }}/{{ k8s_file }}
       register: nginx_service
       failed_when: nginx_service.rc != 1 and nginx_service.rc != 0
-      when: k3d_cluster.rc == 1
     - name: debug kube nginx service
       debug:
         msg: "nginx_service.rc = {{ nginx_service.rc }}"
