@@ -131,6 +131,10 @@
         src: "{{ lookup('env', 'HOME') }}/.kube/config"
         dest: "{{ playbook_dir }}/k3d-kube-config"
         flat: yes
+    # create busybox app with pv/pvc
+    - name: Create busybox app 
+      shell: |
+        kubectl apply -f {{ dest_path }}/app-busybox.yml
 
   handlers:
     - name: reboot pi5
