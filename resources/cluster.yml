@@ -42,15 +42,16 @@ registries:
 options:
   k3s: # options passed on to K3s itself
     # add disk label to node
+    # k3s kubectl label nodes <node-name> foo=baz --overwrite
     nodeLabels:
       - label: disk=ssd
-        nodefilters:
+        nodeFilters:
           - agent:0
       - label: disk=sync
-        nodefilters:
+        nodeFilters:
           - agent:1
       - label: env=dev # same as `--k3s-node-label 'env=dev@agent:1'` -> this results in a kubernetes node label
-        nodefilters:
+        nodeFilters:
           - agent:4
     extraArgs: # additional arguments passed to the `k3s server|agent` command; same as `--k3s-arg`
       - arg: "--tls-san=192.168.100.205" # add public IP for remote access

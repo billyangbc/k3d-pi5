@@ -86,11 +86,14 @@
         path: /tmp/k3d-installer.sh 
         state: absent
     # create k3d cluster
-    - name: Check if k3d cluster is exist
-      shell: "k3d cluster list | grep -w '{{ cluster_name }}'"
+    - name: Check if k3d cluster is existing
+      shell: |
+        k3d cluster list | grep -w '{{ cluster_name }}'
       register: k3d_cluster
+      failed_when: k3d_cluster.rc != 1 and k3d_cluster.rc != 0
     - name: Create k3d cluster
-      shell: "k3d cluster create --config {{ dest_path }}/{{ cluster_file }}"
+      shell: 
+        cmd: k3d cluster create --config {{ dest_path }}/{{ cluster_file }}
       when: not k3d_cluster.rc == 0 # echo $?
     - name: debug
       debug:
