@@ -38,14 +38,14 @@ sudo ufw allow 22
 ## Check k3d by creating a cluster
 
 ```sh
-k3d cluster create testcluster
+k3d cluster create k3d-cluster --volume /media/bill/Data-4TB/k3dvol:/data --volume /media/bill/SSD-DATA/k3dvol:/ssd --servers 1 --agents 2
 
 ```
 
 ## Delete k3d cluster
 
 ```sh
-k3d cluster delete testcluster
+k3d cluster delete k3d-cluster
 ```
 
 ## Using ansible to install k3d
@@ -98,4 +98,25 @@ ssh bill@192.168.100.205
 Run ansible:
 ```sh
 ansible-playbook -i hosts playbook.yml
+```
+
+## Check created deployment with PV
+```sh
+kebuctl get pv,pvc,deploy,pods -o wide
+```
+
+Goto a pod and ouput hostname to a file
+```sh
+k exec -it __POD_NAME -- sh
+df -h
+echo $(hostname) >> /ssd/hostnames-ssd.txt
+echo $(hostname) >> /data/hostnames-data.txt
+exit
+```
+Goto another pod and run above commands
+
+On remote host, check if files exist on disk:
+```sh
+ls -la /media/bill/SSD-DATA/k3dvol/
+ls -la /media/bill/Data-4TB/k3dvol/
 ```
