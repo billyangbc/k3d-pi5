@@ -54,7 +54,14 @@ k3d cluster delete testcluster
 ansible-playbook -i hosts playbook.yml --ask-pass --ask-become-pass
 ```
 
-## Run ansible with passwordless authentication
+## Merge kube config into local kube config file
+Once the ansible playbook is done, there should be a file with name `k3d-kube-config` in the folder where ansible playbook runs.
+Merge the content into local kube config (~/.kube/config),then use command to check:
+```sh
+kubectl get nodes
+```
+
+## Run ansible with passwordless authentication (optional)
 
 ### step 1: Generating SSH keys
 
