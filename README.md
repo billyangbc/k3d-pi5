@@ -71,6 +71,7 @@ On local host:
 ```sh
 cd ~/.ssh
 cat id_ed25519.pub
+# cat id_ed25519.pub | pbcopy
 ```
 
 On the remote host:

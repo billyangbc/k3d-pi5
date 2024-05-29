@@ -85,19 +85,44 @@
       file: 
         path: /tmp/k3d-installer.sh 
         state: absent
-    # create k3d cluster
+    # create k3d cluster if not existing
     - name: Check if k3d cluster is existing
       shell: |
         k3d cluster list | grep -w '{{ cluster_name }}'
       register: k3d_cluster
       failed_when: k3d_cluster.rc != 1 and k3d_cluster.rc != 0
-    - name: Create k3d cluster
-      shell: 
-        cmd: k3d cluster create --config {{ dest_path }}/{{ cluster_file }}
-      when: not k3d_cluster.rc == 0 # echo $?
-    - name: debug
+    - name: debug k3d_cluster
       debug:
-        msg: "{{ lookup('env', 'HOME') }}/.kube/config >> {{ playbook_dir }}/k3d-kube-config"
+        msg: "k3d_cluster.rc = {{ k3d_cluster.rc }}"
+    - name: Create k3d cluster
+      shell:
+        cmd: |
+          echo "Start creating cluster with config file ..."
+          k3d cluster create --config {{ dest_path }}/{{ cluster_file }}
+      when: k3d_cluster.rc == 1 # echo $?
+    # make sure the kube-config file has content (avoid to get empty file)
+    - name: Generate kube-config file
+      shell:
+        cmd: k3d kubeconfig get --all > {{ lookup('env', 'HOME') }}/.kube/config
+      when: k3d_cluster.rc == 1
+    - name: Pause for 10 seconds for service start
+      pause:
+        seconds: 10
+      when: k3d_cluster.rc == 1
+    # create nginx as loadbalance
+    - name: Create nginx loadbalancer
+      shell: |
+        kubectl apply -f {{ dest_path }}/{{ k8s_file }}
+      register: nginx_service
+      failed_when: nginx_service.rc != 1 and nginx_service.rc != 0
+      when: k3d_cluster.rc == 1
+    - name: debug kube nginx service
+      debug:
+        msg: "nginx_service.rc = {{ nginx_service.rc }}"
+      when: nginx_service
+    - name: debug kube config file copy
+      debug:
+        msg: "copy remote {{ lookup('env', 'HOME') }}/.kube/config to local {{ playbook_dir }}/k3d-kube-config"
     - name: Copy kube config to local
       fetch:
         src: "{{ lookup('env', 'HOME') }}/.kube/config"
