@@ -125,11 +125,11 @@
       when: nginx_service
     - name: debug kube config file copy
       debug:
-        msg: "copy remote {{ lookup('env', 'HOME') }}/.kube/config to local {{ playbook_dir }}/k3d-kube-config"
+        msg: "copy remote {{ lookup('env', 'HOME') }}/.kube/config to local {{ lookup('env', 'HOME') }}/.kube/k3d-pi5-config"
     - name: Copy kube config to local
       fetch:
         src: "{{ lookup('env', 'HOME') }}/.kube/config"
-        dest: "{{ playbook_dir }}/k3d-kube-config"
+        dest: "{{ lookup('env', 'HOME') }}/.kube/k3d-pi5-config"
         flat: yes
     # create busybox app with pv/pvc
     - name: Create busybox app 
@@ -141,3 +141,7 @@
       reboot:
 
 #ansible-playbook -i hosts playbook.yml --ask-pass --ask-become-pass
+# use:
+#k --kubeconfig=~/.kube/k3d-pi5-config
+# OR
+#export $KUBECONFIG=~/.kube/k3d-pi5-config
