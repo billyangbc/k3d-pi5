@@ -1,0 +1,11 @@
+# all.yml
+---
+- import_playbook: cluster.yml
+- import_playbook: ingress.yml
+- import_playbook: app.yml
+
+#ansible-playbook -i inventory all.yml --ask-pass --ask-become-pass
+# use:
+#k --kubeconfig=~/.kube/k3d-pi5-config
+# OR
+#export KUBECONFIG=~/.kube/k3d-pi5-config

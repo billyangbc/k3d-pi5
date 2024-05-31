@@ -1,0 +1,11 @@
+#ingress.yml
+--- 
+- hosts: pi5
+  roles:
+    - ingress
+
+#ansible-playbook -i inventory ingress.yml --ask-pass --ask-become-pass
+# use:
+#k --kubeconfig=~/.kube/k3d-pi5-config
+# OR
+#export KUBECONFIG=~/.kube/k3d-pi5-config

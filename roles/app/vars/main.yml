@@ -1,0 +1,3 @@
+---
+# vars
+k8s_file: "hello-app.yml"

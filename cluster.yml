@@ -1,0 +1,12 @@
+# cluster.yml
+---
+- hosts: pi5
+  roles:
+    - { role: bootstrap, become: yes }
+    - cluster
+
+#ansible-playbook -i inventory cluster.yml --ask-pass --ask-become-pass
+# use:
+#k --kubeconfig=~/.kube/k3d-pi5-config
+# OR
+#export KUBECONFIG=~/.kube/k3d-pi5-config

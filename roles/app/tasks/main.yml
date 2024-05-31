@@ -1,0 +1,18 @@
+---
+# add files to destination dir
+- name: Copy config files to remote
+  copy:
+    src: "{{ k8s_file }}"
+    dest: "{{ work_dir }}/"
+    force: yes
+
+# create a k8s application
+- name: Create an application {{ work_dir }}/{{ k8s_file }}
+  shell: |
+    kubectl apply -f {{ work_dir }}/{{ k8s_file }}
+  register: k8s_application
+  failed_when: k8s_application.rc != 1 and k8s_application.rc != 0
+- name: debug k8s result
+  debug:
+    msg: "k8s_application.rc = {{ k8s_application.rc }}"
+  when: k8s_application

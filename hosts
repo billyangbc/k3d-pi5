@@ -1,9 +1,0 @@
-
-[local]
-localhost
-
-[pi_5]
-192.168.100.205 ansible_user=bill 
-
-[local:vars]
-ansible_connection=local

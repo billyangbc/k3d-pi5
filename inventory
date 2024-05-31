@@ -1,0 +1,6 @@
+
+[pi5]
+192.168.100.205 ansible_user=bill
+
+[pi5:vars]
+work_dir="~/workspace"

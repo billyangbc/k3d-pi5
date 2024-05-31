@@ -1,0 +1,62 @@
+---
+# enable cgroup memory
+- name: Set cgroup on Raspberry pi (arm64)
+  lineinfile:
+    path: /boot/firmware/cmdline.txt
+    regexp: '^(.*rootwait)$'
+    line: '\1 cgroup_memory=1 cgroup_enable=memory'
+    backrefs: true
+  when: ( ansible_facts.architecture is search "arm" )
+  notify:
+    - reboot-server
+
+# install apt packages
+- name: Install aptitude
+  apt:
+    name: aptitude
+    state: latest
+    update_cache: true
+- name: Install required packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - docker.io
+      - docker-compose
+      - python3-pip
+    state: latest
+    update_cache: true
+- name: adding existing user "{{ ansible_user }}" to group sudo
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+# install kubectl if not existing
+- name: Check if kubectl is installed
+  stat:
+    path: "{{ kubectl_bin }}"
+  register: kubectl
+- name: Download the latest kubectl release
+  uri:
+    url: "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+    dest: "{{ kubectl_bin }}"
+    mode: '0755'
+  when: kubectl.stat.exists == False
+# install k3d if not existing
+- name: Check if k3d is installed
+  stat:
+    path: "{{ k3d_bin }}"
+  register: k3d
+- name: Install k3d if not existing
+  get_url: 
+    url: https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh dest=/tmp/k3d-installer.sh
+  when: k3d.stat.exists == False
+- name: Install k3d
+  shell: /tmp/k3d-installer.sh
+  when: k3d.stat.exists == False
+- name: Remove the k3d-installer.sh
+  file: 
+    path: /tmp/k3d-installer.sh 
+    state: absent

@@ -1,0 +1,4 @@
+---
+#vars:
+kubectl_bin: "/usr/local/bin/kubectl"
+k3d_bin: "/usr/local/bin/k3d"

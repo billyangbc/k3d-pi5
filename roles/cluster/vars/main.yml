@@ -1,0 +1,10 @@
+---
+#vars
+k3d_image: "rancher/k3s:v1.30.1-k3s1-arm64"
+host_path_ssd: "/media/bill/SSD-DATA/k3dvol/01_cluster"
+host_path_hdd: "/media/bill/Data-4TB/k3dvol/01_cluster"
+cluster_file: "cluster.yml"
+cluster_name: "cluster-pi5"
+cluster_host: "pi5.local"
+cluster_ip: "192.168.100.205"
+cluster_kubeconfig: "k3d-pi5-config"
