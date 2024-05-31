@@ -6,7 +6,7 @@ servers: 3 # same as `--servers 3`
 agents: 5 # same as `--agents 5`
 image: rancher/k3s:v1.30.1-k3s1-arm64
 kubeAPI: # same as `--api-port pi-5.local:6445` (where the name would resolve to 127.0.0.1)
-  host: "pi-5.local" # important for the `server` setting in the kubeconfig
+  host: "pi-5.local" # important for the `server` setting in the kubeconfig, for local: /etc/hosts
   hostIP: "0.0.0.0" # where the Kubernetes API will be listening on
   hostPort: "6445" # where the Kubernetes API listening port will be mapped to on your host system
 ports:
@@ -16,7 +16,7 @@ ports:
       - loadbalancer
   - port: 30000-30100:30000-30100
     nodeFilters:
-    - server:*
+      - server:*
 env:
   - envVar: bar=baz # for testing, same as `--env 'bar=baz@server:0'`
     nodeFilters:
@@ -24,10 +24,10 @@ env:
 volumes: # repeatable flags are represented as YAML lists
   # attache SSD to agent 0, sync disk (backup) to agent 1, data disk to all agents
   # same as `--volume '/my/host/path:/path/in/node@server:0;agent:*'`
-  - volume: /media/bill/SSD-DATA/k3dvol:/ssd
+  - volume: /media/bill/SSD-DATA/k3dvol/01_hello:/ssd
     nodeFilters:
       - agent:0
-  - volume: /media/bill/Data-4TB/k3dvol:/data
+  - volume: /media/bill/Data-4TB/k3dvol/01_hello:/data
     nodeFilters:
       - agent:*
 registries:
