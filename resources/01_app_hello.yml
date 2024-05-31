@@ -1,0 +1,144 @@
+---
+# SSD PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ssd-pv-hello
+  labels:
+    type: local-ssd
+spec:
+  storageClassName: manual
+  volumeMode: Filesystem # Filesystem|Block. Filesystem is the default mode if the volume mode is not defined.
+  capacity:
+    storage: 10Mi
+  accessModes:
+    #ReadWriteOnce -- the volume can be mounted as read-write by a single node
+    #ReadOnlyMany -- the volume can be mounted read-only by many nodes
+    #ReadWriteMany -- the volume can be mounted as read-write by many nodes
+    - ReadWriteOnce 
+  hostPath:
+    path: "/ssd/hello" # new sub-folder under cluster mount folder
+---
+# Data PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-pv-hello
+  labels:
+    type: local-hdd
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 20Mi
+  accessModes:
+    - ReadWriteMany # the volume can be mounted as read-write by many nodes.
+  hostPath:
+    path: "/data/hello" # new sub-folder under cluster mount folder
+
+# create PVC
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ssd-pvc-hello
+spec:
+  storageClassName: manual # must match PV specification to be successfully bound together
+  accessModes:
+    - ReadWriteOnce # must be compatible with the access modes supported by the PV.
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc-hello
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Mi
+
+---
+# ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hello-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+#    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-service # service name
+            port:
+              number: 80
+
+---
+#kubectl create service clusterip nginx --tcp=80:80
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service # for binding with ingress
+spec:
+  selector:
+    app: hello-pod # equality of matchLabels, get target pods
+  ports:
+    - protocol: TCP
+      port: 80 # service port
+      targetPort: 80 # pod port
+#      nodePort: 30080
+#  type: ClusterIP
+  type: LoadBalancer
+
+---
+#kubectl create deployment hello --image=billyangbc/hellodocker --replicas=3
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-app # for binding with service
+  labels:
+    app: hello
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: hello-pod
+    spec:
+      volumes:
+        - name: hello-vol-ssd
+          persistentVolumeClaim:
+            claimName: ssd-pvc-hello
+        - name: hello-vol-data
+          persistentVolumeClaim:
+            claimName: data-pvc-hello
+      containers:
+      - name: hello-docker
+        image: billyangbc/hellodocker:bookworm-arm64
+        ports:
+          - protocol: TCP
+            containerPort: 80
+        volumeMounts:
+          - mountPath: "/ssd"
+            name: hello-vol-ssd
+          - mountPath: "/data"
+            name: hello-vol-data
+        resources: {}
+        imagePullPolicy: IfNotPresent # This ensures that the image from the local cache is going to be used.
+      restartPolicy: Always
+      nodeSelector:
+        disk: ssd

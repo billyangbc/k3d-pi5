@@ -8,7 +8,7 @@
     k3d_app: "/usr/local/bin/k3d"
     cluster_name: "cluster-pi5"
     cluster_file: "01_cluster.yml"
-    k8s_file: "01_app.yml"
+    k8s_file: "01_app_hello.yml"
 
   become: true
   tasks:
@@ -113,16 +113,16 @@
       shell:
         cmd: k3d kubeconfig get --all > {{ lookup('env', 'HOME') }}/.kube/config
       when: k3d_cluster.rc == 1
-    # create nginx as loadbalance
-    - name: Create nginx loadbalancer
+    # create a k8s application
+    - name: Create a k8s application {{ dest_path }}/{{ k8s_file }}
       shell: |
         kubectl apply -f {{ dest_path }}/{{ k8s_file }}
-      register: nginx_service
-      failed_when: nginx_service.rc != 1 and nginx_service.rc != 0
-    - name: debug kube nginx service
+      register: k8s_application
+      failed_when: k8s_application.rc != 1 and k8s_application.rc != 0
+    - name: debug k8s application
       debug:
-        msg: "nginx_service.rc = {{ nginx_service.rc }}"
-      when: nginx_service
+        msg: "k8s_application.rc = {{ k8s_application.rc }}"
+      when: k8s_application
     - name: debug kube config file copy
       debug:
         msg: "copy remote {{ lookup('env', 'HOME') }}/.kube/config to local {{ lookup('env', 'HOME') }}/.kube/k3d-pi5-config"
@@ -131,10 +131,6 @@
         src: "{{ lookup('env', 'HOME') }}/.kube/config"
         dest: "{{ lookup('env', 'HOME') }}/.kube/k3d-pi5-config"
         flat: yes
-    # create busybox app with pv/pvc
-    - name: Create busybox app 
-      shell: |
-        kubectl apply -f {{ dest_path }}/app-busybox.yml
 
   handlers:
     - name: reboot pi5

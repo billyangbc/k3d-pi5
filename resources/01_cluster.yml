@@ -10,8 +10,8 @@ kubeAPI: # same as `--api-port pi-5.local:6445` (where the name would resolve to
   hostIP: "0.0.0.0" # where the Kubernetes API will be listening on
   hostPort: "6445" # where the Kubernetes API listening port will be mapped to on your host system
 ports:
-  # same as `--port '8080:8080@loadbalancer'`
-  - port: 8080:8080
+  # same as `--port '8080:80@loadbalancer'`
+  - port: 8080:80
     nodeFilters:
       - loadbalancer
   - port: 30000-30100:30000-30100
