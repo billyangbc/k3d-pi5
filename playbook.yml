@@ -7,8 +7,8 @@
     dest_path: "{{ lookup('env', 'HOME') }}/workspace"
     k3d_app: "/usr/local/bin/k3d"
     cluster_name: "cluster-pi5"
-    cluster_file: "cluster.yml"
-    k8s_file: "nginx-svc-deploy.yml"
+    cluster_file: "01_cluster.yml"
+    k8s_file: "01_app.yml"
 
   become: true
   tasks:
@@ -144,4 +144,4 @@
 # use:
 #k --kubeconfig=~/.kube/k3d-pi5-config
 # OR
-#export $KUBECONFIG=~/.kube/k3d-pi5-config
+#export KUBECONFIG=~/.kube/k3d-pi5-config
