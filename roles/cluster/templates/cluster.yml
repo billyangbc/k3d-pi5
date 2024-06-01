@@ -11,7 +11,8 @@ kubeAPI: # same as `--api-port HOSTNAME:6445` (where the name would resolve to 1
   hostPort: "6445" # where the Kubernetes API listening port will be mapped to on your host system
 ports:
   # same as `--port '8080:80@loadbalancer'`
-  - port: 8080:80
+  # after cluster is created, use `k3d cluster edit {{ cluster_name }} --port-add 8081:81@loadbalancer`
+  - port: 8080-8082:80-82
     nodeFilters:
       - loadbalancer
   - port: 30000-30100:30000-30100

@@ -6,6 +6,6 @@
 
 #ansible-playbook -i inventory all.yml --ask-pass --ask-become-pass
 # use:
-#k --kubeconfig=~/.kube/k3d-pi5-config
+#k --kubeconfig=~/.kube/config-pi5
 # OR
-#export KUBECONFIG=~/.kube/k3d-pi5-config
+#export KUBECONFIG=~/.kube/config-pi5
