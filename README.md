@@ -14,6 +14,7 @@ sudo apt update && sudo apt dist-upgrade
 ```
 
 ## Enable cgroup memory
+You enable it by simply appending `cgroup_memory=1 cgroup_enable=memory` to `/boot/firmware/cmdline.txt`.
 
 ## Install kubectl
 
@@ -40,9 +41,15 @@ sudo ufw allow 22
 ## Check k3d by creating a cluster
 
 ```sh
-k3d cluster create k3d-cluster --volume /media/bill/Data-4TB/k3dvol:/data --volume /media/bill/SSD-DATA/k3dvol:/ssd --servers 1 --agents 2
-
+k3d cluster create k3d-cluster \
+    --volume /media/bill/Data-4TB/k3dvol:/data \
+    --volume /media/bill/SSD-DATA/k3dvol:/ssd \
+    --servers 1 \
+    --agents 2 \
+    --disable=traefik \
+    --tls-san=192.168.1.85
 ```
+
 
 ## Delete k3d cluster
 
