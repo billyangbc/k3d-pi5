@@ -129,3 +129,14 @@ On remote host, check if files exist on disk:
 ls -la /media/bill/SSD-DATA/k3dvol/
 ls -la /media/bill/Data-4TB/k3dvol/
 ```
+
+
+## Tips:
+When build docker for multiple architecture on ubuntu, `Docker Desktop` will be needed.
+However, when upgrade to ubuntu 24.04, the `Docker Desktop` is not able to start.
+Here is a workaround:
+
+```sh
+sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+systemctl --user restart docker-desktop
+```
