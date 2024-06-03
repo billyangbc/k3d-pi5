@@ -85,9 +85,10 @@ We will copy the public key `id_ed25519.pub` to the remote host's `authorized_ke
 
 On local host:
 ```sh
-cd ~/.ssh
-cat id_ed25519.pub
-# cat id_ed25519.pub | pbcopy
+ssh-copy-id user@hostname.example.com
+#cd ~/.ssh
+#cat id_ed25519.pub
+#cat id_ed25519.pub | pbcopy
 ```
 
 On the remote host:
@@ -130,7 +131,6 @@ ls -la /media/bill/SSD-DATA/k3dvol/
 ls -la /media/bill/Data-4TB/k3dvol/
 ```
 
-
 ## Tips:
 
 ### 1. Docker Desktop is not able to start on ubuntu 24.04
@@ -161,4 +161,13 @@ To remove the public key from remote server,
 ```sh
 idssh=$(awk '{print $2}' ~/.ssh/id_rsa.pub)
 ssh $remote "sed -i '\#$idssh#d' .ssh/authorized_keys"
+```
+
+### 3. Initialize pass issue for `dockr login`
+```sh
+pass remove -rf docker-credential-helpers
+#OR    rm -rf ~/.password-store/docker-credential-helpers
+gpg --generate-key
+gpg --full-gen-key
+pass init <generated gpg-id public key>
 ```
