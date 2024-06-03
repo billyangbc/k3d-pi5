@@ -1,0 +1,17 @@
+- name: copy docker-compose
+  copy:
+    src: files/{{ item.src }}
+    dest: "{{ work_dir }}/docker-compose/{{ item.dest }}"
+    force: yes
+  loop:
+    - src: "docker-compose.yml"
+      dest: "docker-compose.yml"
+    - src: "default.env"
+      dest: ".env"
+
+- name: Create and start services
+  community.docker.docker_compose:
+    project_src: "{{ work_dir }}/docker-compose"
+    files:
+      - docker-compose.yml
+  register: output

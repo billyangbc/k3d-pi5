@@ -1,0 +1,44 @@
+#version: '3.9'
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - '${DATA_DIR}/postgresql:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_DB=postgresql
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=db_pass
+
+  mariadb:
+    image: yobasystems/alpine-mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - '${DATA_DIR}/mariadb:/var/lib/mysql'
+    environment:
+      - MARIADB_DATABASE=mariadb
+      - MARIADB_ROOT_PASSWORD=admin
+      - MARIADB_USER=db_user
+      - MARIADB_PASSWORD=db_pass
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - '${DATA_DIR}/redis:/data'
+
+  nextcloud:
+    image: nextcloud
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - '${DATA_DIR}/nextcloud:/var/www/html'
+    environment:
+      - PUID=1000
+      - PGID=1000

@@ -1,0 +1,8 @@
+# service.yml
+---
+- hosts: pi5
+  roles:
+    - service
+
+# use:
+#ansible-playbook -i inventory service.yml --ask-pass --ask-become-pass
