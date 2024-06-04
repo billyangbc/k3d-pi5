@@ -79,7 +79,7 @@ spec:
   type: LoadBalancer
 
 ---
-#kubectl create deployment hello --image=billyangbc/hellodocker --replicas=3
+#kubectl create deployment hello --image=billyangbc/hellodocker --replicas=2
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -87,7 +87,7 @@ metadata:
   labels:
     app: hello
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: hello-pod
