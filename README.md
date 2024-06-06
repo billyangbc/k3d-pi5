@@ -171,3 +171,12 @@ gpg --generate-key
 gpg --full-gen-key
 pass init <generated gpg-id public key>
 ```
+
+### 4. Build docker image for multiple platform (https://www.docker.com/blog/multi-arch-images/)
+```sh
+docker buildx build --platform linux/arm64 -t billyangbc/hellodocker:bookworm-arm64 -f Dockerfile . --no-cache
+#push to docker.io:
+docker login
+docker build -t <username>/<repo>:<tag> .
+docker push <username>/<repo>:<tag>
+```

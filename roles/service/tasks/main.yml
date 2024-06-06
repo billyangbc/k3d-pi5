@@ -8,6 +8,8 @@
       dest: "docker-compose.yml"
     - src: "default.env"
       dest: ".env"
+    - src: "postgres-init.sql"
+      dest: "postgres-init.sql"
 
 - name: Create and start services
   community.docker.docker_compose:
