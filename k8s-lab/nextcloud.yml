@@ -1,0 +1,89 @@
+---
+# Data PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-pv-nextcloud
+  labels:
+    type: local-hdd
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/data/nextcloud"
+
+---
+# Data PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc-nextcloud
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud-service
+spec:
+  selector:
+    app: nextcloud-pod
+  ports:
+    - protocol: TCP
+      port: 82
+      targetPort: 80
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud-app
+  labels:
+    app: nextcloud
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nextcloud-pod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nextcloud-pod
+    spec:
+      volumes:
+        - name: nextcloud-vol-data
+          persistentVolumeClaim:
+            claimName: data-pvc-nextcloud
+      containers:
+        - name: nextcloud-docker
+          image: nextcloud
+          ports:
+            - protocol: TCP
+              containerPort: 80
+          volumeMounts:
+            - mountPath: "/var/www/html"
+              name: nextcloud-vol-data
+          env:
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_USER
+              value: ps_user
+            - name: POSTGRES_PASSWORD
+              value: bmV4dGNsb3Vk # base64 encoded: nextcloud
+            - name: POSTGRES_DATABASE
+              value: ps_db
+          resources: {}
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
