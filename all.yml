@@ -1,6 +1,6 @@
 # all.yml
 ---
-- import_playbook: cluster.yml
+- import_playbook: cluster-pi5.yml
 - import_playbook: ingress.yml
 - import_playbook: app.yml
 
