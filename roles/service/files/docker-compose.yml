@@ -69,7 +69,7 @@ services:
       - ME_CONFIG_MONGODB_SERVER=mongo
       - ME_CONFIG_BASICAUTH=false
 
-#default login:
+#default login as administrator:
 #Email:    admin@example.com
 #Password: changeme
   nginx-proxy-manage:
