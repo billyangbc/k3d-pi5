@@ -1,4 +1,4 @@
-# service.yml
+# service.yml to run docker-compose on pi5
 ---
 - hosts: pi5
   roles:

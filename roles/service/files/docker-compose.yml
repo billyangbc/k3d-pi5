@@ -38,8 +38,8 @@ services:
     image: nextcloud
     restart: always
     ports:
-      - 80:80
-      - 443:443
+      - 8280:80
+      - 8289:443
     volumes:
       - '${DATA_DIR}/nextcloud:/var/www/html'
     environment:
@@ -68,3 +68,31 @@ services:
       - ME_CONFIG_MONGODB_URL=mongodb://admin:admin@mongo:27017/
       - ME_CONFIG_MONGODB_SERVER=mongo
       - ME_CONFIG_BASICAUTH=false
+
+#default login:
+#Email:    admin@example.com
+#Password: changeme
+  nginx-proxy-manage:
+    container_name: nginx-proxy-manager
+    image: jc21/nginx-proxy-manager:latest
+    ports:
+      - '80:80'
+      - '8181:81'
+      - '8189:443'
+    volumes:
+      - "${DATA_DIR}/ngx-proxy-mgr/data:/data"
+      - "${DATA_DIR}/ngx-proxy-mgr/letsencrypt:/etc/letsencrypt"
+    restart: unless-stopped
+# set hosts in /etc/hosts to access those hosts through nginx-proxy-manager
+#192.168.100.205 proxy.dev.local
+# redirect hosts
+#192.168.100.205 postgresql.dev.local
+#192.168.100.205 mariadb.dev.local
+#192.168.100.205 redis.dev.local
+#192.168.100.205 mongo.dev.local
+# proxy hosts
+#192.168.100.205 nextcloud.dev.local
+#192.168.100.205 mongo-express.dev.local
+#192.168.100.205 minio.dev.local
+#192.168.100.205 grafana.dev.local
+#192.168.100.205 prometheus.dev.local
