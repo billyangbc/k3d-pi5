@@ -85,15 +85,16 @@ services:
       - "${DATA_DIR}/ngx-proxy-mgr/letsencrypt:/etc/letsencrypt"
     restart: unless-stopped
 # set hosts in /etc/hosts to access those hosts through nginx-proxy-manager
-# redirect hosts
+## hosts forwar (nginx proxy on pi5) 
+#192.168.100.205 proxy.dev.local
 #192.168.100.205 postgresql.dev.local
 #192.168.100.205 mariadb.dev.local
 #192.168.100.205 redis.dev.local
+#192.168.100.205 nextcloud.dev.local
 #192.168.100.205 mongo.dev.local
-#192.168.100.205 minio.dev.local => minio (192.168.100.201)
-# proxy hosts
-#192.168.100.205 proxy.dev.local => nginx-proxy-manager (8181)
-#192.168.100.205 nextcloud.dev.local => nextcloud (8280)
-#192.168.100.205 mongo-express.dev.local => mongo-express (10081)
-#192.168.100.205 grafana.dev.local => grafana (192.168.100.201:3000)
-#192.168.100.205 prometheus.dev.local => prometheus (192.168.100.201:9090)
+#192.168.100.205 mongo-express.dev.local
+#192.168.100.205 grafana.dev.local
+#192.168.100.205 prometheus.dev.local
+## nas-pi (192.168.100.201)
+#192.168.100.201 minio.pi.local
+#192.168.100.201 omv.pi.local
