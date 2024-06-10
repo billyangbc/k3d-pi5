@@ -116,7 +116,13 @@ spec:
             name: hello-vol-ssd
           - mountPath: "/data"
             name: hello-vol-data
-        resources: {}
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "125m"
+          limits:
+            memory: "64Mi"
+            cpu: "250m"
         imagePullPolicy: IfNotPresent # This ensures that the image from the local cache is going to be used.
       restartPolicy: Always
       nodeSelector:

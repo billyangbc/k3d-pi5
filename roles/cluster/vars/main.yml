@@ -5,6 +5,8 @@ host_path_ssd: "/media/bill/SSD-DATA/k3dvol/01_cluster"
 host_path_hdd: "/media/bill/Data-4TB/k3dvol/01_cluster"
 cluster_file: "cluster.yml"
 cluster_name: "cluster-pi5"
+cluster_servers: 1
+cluster_agents: 3
 cluster_host: "pi5.local"
 cluster_ip: "192.168.100.205"
 cluster_kubeconfig: "config-pi5"
