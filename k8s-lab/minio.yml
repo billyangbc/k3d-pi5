@@ -91,6 +91,12 @@ spec:
         volumeMounts:
           - mountPath: "/data"
             name: minio-vol-data
-        resources: {}
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
         imagePullPolicy: IfNotPresent # This ensures that the image from the local cache is going to be used.
       restartPolicy: Always

@@ -74,6 +74,13 @@ spec:
               port: 5432
             initialDelaySeconds: 30
             timeoutSeconds: 5
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
       volumes:
         - name: postgresdata
           persistentVolumeClaim:

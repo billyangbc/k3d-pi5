@@ -20,6 +20,11 @@ spec:
         image: nginx #nginx:1.26.0
         ports:
         - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
 ---
 #kubectl create service clusterip nginx --tcp=81:80
 apiVersion: v1

@@ -38,14 +38,16 @@ services:
     image: nextcloud
     restart: always
     ports:
-      - 8280:80
-      - 8289:443
+      - 8080:80
+      - 8089:443
     volumes:
       - '${DATA_DIR}/nextcloud:/var/www/html'
+#      - ./config.php:/var/www/html/config/config.php
     environment:
       - PUID=1000
       - PGID=1000
-
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
   mongo:
     image: mongo
     restart: always

@@ -84,6 +84,12 @@ spec:
               value: bmV4dGNsb3Vk # base64 encoded: nextcloud
             - name: POSTGRES_DATABASE
               value: ps_db
-          resources: {}
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
           imagePullPolicy: IfNotPresent
       restartPolicy: Always

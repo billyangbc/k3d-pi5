@@ -10,9 +10,9 @@ kubeAPI: # same as `--api-port HOSTNAME:6445` (where the name would resolve to 1
   hostIP: "0.0.0.0" # where the Kubernetes API will be listening on
   hostPort: "6445" # where the Kubernetes API listening port will be mapped to on your host system
 ports:
-  # same as `--port '8080:80@loadbalancer'`
+  # same as `--port '8880:80@loadbalancer'`
   # after cluster is created, use `k3d cluster edit {{ cluster_name }} --port-add 8081:81@loadbalancer`
-  - port: 8080-8089:80-89
+  - port: 8880-8882:80-82
     nodeFilters:
       - loadbalancer
   - port: 9000-9002:9000-9002 # for Minio
@@ -42,7 +42,7 @@ volumes: # repeatable flags are represented as YAML lists
       - agent:*
 registries:
   create:
-    name: {{ cluster_host }}
+    name: "docker-registry-{{ cluster_host }}"
     host: 0.0.0.0
     hostPort: "5000"
     volumes:
