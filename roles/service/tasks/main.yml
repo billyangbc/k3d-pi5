@@ -10,6 +10,10 @@
       dest: ".env"
     - src: "postgres-init.sql"
       dest: "postgres-init.sql"
+    - src: "newrelic-infra.dockerfile"
+      dest: "newrelic-infra.dockerfile"
+    - src: "newrelic-infra.yml"
+      dest: "newrelic-infra.yml"
 
 - name: Create and start services
   community.docker.docker_compose:
