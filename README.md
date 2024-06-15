@@ -42,8 +42,7 @@ sudo ufw allow 22
 
 ```sh
 k3d cluster create k3d-cluster \
-    --volume /media/bill/Data-4TB/k3dvol:/data \
-    --volume /media/bill/SSD-DATA/k3dvol:/ssd \
+    --volume /media/bill/SSD-DATA/k3dvol-01:/ssd \
     --servers 1 \
     --agents 2 \
     --disable=traefik \

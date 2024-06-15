@@ -18,22 +18,6 @@ spec:
     - ReadWriteOnce 
   hostPath:
     path: "/ssd/hello" # new sub-folder under cluster mount folder
----
-# Data PV
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: data-pv-hello
-  labels:
-    type: local-hdd
-spec:
-  storageClassName: manual
-  capacity:
-    storage: 20Mi
-  accessModes:
-    - ReadWriteMany # the volume can be mounted as read-write by many nodes.
-  hostPath:
-    path: "/data/hello" # new sub-folder under cluster mount folder
 
 # create PVC
 ---
@@ -48,18 +32,6 @@ spec:
   resources:
     requests:
       storage: 10Mi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: data-pvc-hello
-spec:
-  storageClassName: manual
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 20Mi
 
 ---
 #kubectl create service clusterip nginx --tcp=80:80
@@ -102,9 +74,6 @@ spec:
         - name: hello-vol-ssd
           persistentVolumeClaim:
             claimName: ssd-pvc-hello
-        - name: hello-vol-data
-          persistentVolumeClaim:
-            claimName: data-pvc-hello
       containers:
       - name: hello-docker
         image: billyangbc/hellodocker:bookworm-arm64
@@ -114,8 +83,6 @@ spec:
         volumeMounts:
           - mountPath: "/ssd"
             name: hello-vol-ssd
-          - mountPath: "/data"
-            name: hello-vol-data
         resources:
           requests:
             memory: "32Mi"
