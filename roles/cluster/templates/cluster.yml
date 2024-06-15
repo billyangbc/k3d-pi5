@@ -36,9 +36,6 @@ volumes: # repeatable flags are represented as YAML lists
   # same as `--volume '/my/host/path:/path/in/node@server:0;agent:*'`
   - volume: {{ host_path_ssd }}:/ssd
     nodeFilters:
-      - agent:0
-  - volume: {{ host_path_hdd }}:/data
-    nodeFilters:
       - agent:*
 registries:
   create:
@@ -54,10 +51,7 @@ options:
     nodeLabels:
       - label: disk=ssd
         nodeFilters:
-          - agent:0
-      - label: disk=sync
-        nodeFilters:
-          - agent:1
+          - agent:*
       - label: env=dev # same as `--k3s-node-label 'env=dev@agent:1'` -> this results in a kubernetes node label
         nodeFilters:
           - agent:1

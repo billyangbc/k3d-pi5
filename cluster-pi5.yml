@@ -5,7 +5,7 @@
     - { role: bootstrap, become: yes }
     - cluster
 
-#ansible-playbook -i inventory cluster.yml --ask-pass --ask-become-pass
+#ansible-playbook -i inventory cluster-pi5.yml --ask-pass --ask-become-pass
 # use:
 #k --kubeconfig=~/.kube/config-pi5
 # OR

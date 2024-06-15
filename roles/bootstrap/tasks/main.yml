@@ -38,9 +38,17 @@
   stat:
     path: "{{ kubectl_bin }}"
   register: kubectl
+- name: Get kubectl version
+  command: curl -L -s https://dl.k8s.io/release/stable.txt
+  register: kubectl_version
+  when: kubectl.stat.exists == False
+- name: Print the kubectl version
+  debug:
+    var: kubectl_version.stdout
+  when: kubectl.stat.exists == False
 - name: Download the latest kubectl release
   uri:
-    url: "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+    url: "https://dl.k8s.io/release/{{ kubectl_version.stdout }}/bin/linux/arm64/kubectl"
     dest: "{{ kubectl_bin }}"
     mode: '0755'
   when: kubectl.stat.exists == False
@@ -51,7 +59,9 @@
   register: k3d
 - name: Install k3d if not existing
   get_url: 
-    url: https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh dest=/tmp/k3d-installer.sh
+    url: https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh
+    dest: /tmp/k3d-installer.sh
+    mode: '0755'
   when: k3d.stat.exists == False
 - name: Install k3d
   shell: /tmp/k3d-installer.sh
