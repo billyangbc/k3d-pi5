@@ -23,13 +23,14 @@ services:
     restart: unless-stopped
     ports:
       - 3306:3306
-    volumes:
-      - '${DATA_DIR}/mariadb:/var/lib/mysql'
+# volumes cause login denied issue
+#    volumes:
+#      - '${DATA_DIR}/mariadb:/var/lib/mysql'
     environment:
-      - MARIADB_DATABASE=mariadb
-      - MARIADB_ROOT_PASSWORD=admin
-      - MARIADB_USER=db_user
-      - MARIADB_PASSWORD=db_pass
+      MYSQL_DATABASE: mariadb
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_USER: db_user
+      MYSQL_PASSWORD: db_pass
     networks:
       - dev-local
 
