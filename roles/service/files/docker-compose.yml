@@ -20,7 +20,7 @@ services:
 
   mariadb:
     image: yobasystems/alpine-mariadb
-    restart: always
+    restart: unless-stopped
     ports:
       - 3306:3306
     volumes:
