@@ -1,3 +1,6 @@
+networks:
+  dev-local:
+    driver: bridge
 #version: '3.9'
 services:
   postgres:
@@ -8,11 +11,12 @@ services:
     volumes:
       - '${DATA_DIR}/postgresql:/var/lib/postgresql/data'
       - ./postgres-init.sql:/docker-entrypoint-initdb.d/init.sql
-
     environment:
       - POSTGRES_DB=postgresql
       - POSTGRES_USER=db_user
       - POSTGRES_PASSWORD=db_pass
+    networks:
+      - dev-local
 
   mariadb:
     image: yobasystems/alpine-mariadb
@@ -26,6 +30,8 @@ services:
       - MARIADB_ROOT_PASSWORD=admin
       - MARIADB_USER=db_user
       - MARIADB_PASSWORD=db_pass
+    networks:
+      - dev-local
 
   redis:
     image: redis
@@ -33,6 +39,8 @@ services:
       - 6379:6379
     volumes:
       - '${DATA_DIR}/redis:/data'
+    networks:
+      - dev-local
 
   nextcloud:
     image: nextcloud
@@ -48,6 +56,8 @@ services:
       - PGID=1000
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+    networks:
+      - dev-local
   mongo:
     image: mongo
     restart: always
@@ -59,6 +69,8 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=admin
       - MONGO_INITDB_DATABASE=mongo
+    networks:
+      - dev-local
   mongo-express:
     image: mongo-express
     restart: always
@@ -70,6 +82,8 @@ services:
       - ME_CONFIG_MONGODB_URL=mongodb://admin:admin@mongo:27017/
       - ME_CONFIG_MONGODB_SERVER=mongo
       - ME_CONFIG_BASICAUTH=false
+    networks:
+      - dev-local
 
 #default login as administrator:
 #Email:    admin@example.com
@@ -86,17 +100,28 @@ services:
       - "${DATA_DIR}/ngx-proxy-mgr/data:/data"
       - "${DATA_DIR}/ngx-proxy-mgr/letsencrypt:/etc/letsencrypt"
     restart: unless-stopped
+    networks:
+      - dev-local
 # set hosts in /etc/hosts to access those hosts through nginx-proxy-manager
-## hosts forwar (nginx proxy on pi5) 
-#192.168.100.205 proxy.dev.local
-#192.168.100.205 postgresql.dev.local
-#192.168.100.205 mariadb.dev.local
-#192.168.100.205 redis.dev.local
-#192.168.100.205 nextcloud.dev.local
-#192.168.100.205 mongo.dev.local
-#192.168.100.205 mongo-express.dev.local
-#192.168.100.205 grafana.dev.local
-#192.168.100.205 prometheus.dev.local
-## nas-pi (192.168.100.201)
-#192.168.100.201 minio.pi.local
-#192.168.100.201 omv.pi.local
+# # pi servers
+# 192.168.100.201 nas-pi.local nas-pi
+# 192.168.100.202 pi2.dev.local pi2.local pi2
+# 192.168.100.205 pi5.dev.local pi5.local pi5
+#    
+# # hosts forwar (nginx proxy on pi5) 
+# 192.168.100.205 proxy.dev.local
+# 192.168.100.205 postgresql.dev.local
+# 192.168.100.205 mariadb.dev.local
+# 192.168.100.205 redis.dev.local
+# 192.168.100.205 nextcloud.dev.local
+# 192.168.100.205 mongo.dev.local
+# 192.168.100.205 mongo-express.dev.local
+#    
+# # servers on nas-pi (192.168.100.201)
+# # =>192.168.100.201:3000
+# 192.168.100.205 grafana.dev.local
+# # => 192.168.100.201:9090
+# 192.168.100.205 prometheus.dev.local
+# # => 192.168.100.201:9000, 192.168.100.201:9001
+# 192.168.100.201 minio.pi.local
+# 192.168.100.201 omv.pi.local
