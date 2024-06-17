@@ -16,6 +16,14 @@ services:
       - POSTGRES_DB=postgresql
       - POSTGRES_USER=db_user
       - POSTGRES_PASSWORD=db_pass
+      - PGUSER=db_user
+    healthcheck:
+      #error: database system was shut down at 2024-06-16 21:36:47 UTC
+      #CHANGE 1: this command checks if the database is ready, right on the source db server
+      test: [ "CMD-SHELL", "pg_isready -d postgresql -U db_user" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - dev-local
 
