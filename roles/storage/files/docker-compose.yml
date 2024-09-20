@@ -1,0 +1,50 @@
+# https://hub.docker.com/r/gists/nfs-server
+
+networks:
+  storage_network:
+    driver: bridge
+
+services:
+  nfs-server:
+    image: gists/nfs-server
+    container_name: nfs-server
+    ports:
+      - "2049:2049"
+    # https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
+    cap_add:
+      - SYS_ADMIN
+      - SETPCAP
+    environment:
+      NFS_DIR: /nfs-share
+      NFS_DOMAIN: "*"
+      NFS_OPTION: "fsid=0,rw,sync,no_root_squash,all_squash,anonuid=0,anongid=0,no_subtree_check"
+    volumes:
+      - ${NFS_LOCAL}:/nfs-share
+    networks:
+      - storage_network
+    restart: always
+  # nfs v4 client
+  #mkdir nfs-share
+  #sudo mount -v -t nfs -o vers=4,port=2049 host:/ nfs-share
+
+  minio:
+    image: billyangbc/minio:debian-arm
+    environment:
+      # access and secret keys for MinIO server minimal 8 characters
+      MINIO_ROOT_USER: "minio-admin"
+      MINIO_ROOT_PASSWORD: "minio-admin"
+    command: server --address ":9000" --console-address ":9001" /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      # /var/local/docker/volumes
+      - "${MINIO_LOCAL}:/data"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - storage_network
+    restart: always
