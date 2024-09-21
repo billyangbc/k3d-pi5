@@ -29,6 +29,7 @@ services:
 
   minio:
     image: billyangbc/minio:debian-arm
+    container_name: minio-server
     environment:
       # access and secret keys for MinIO server minimal 8 characters
       MINIO_ROOT_USER: "minio-admin"
@@ -51,7 +52,7 @@ services:
 
   samba:
     image: ghcr.io/servercontainers/samba:latest
-    container_name: samba
+    container_name: samba-server
     restart: unless-stopped
     environment:
       GROUP_family: 1500
@@ -64,5 +65,7 @@ services:
       - ${SAMBA_LOCAL}:/shares/data
     ports:
       - 445:445
+    networks:
+      - storage_network
     cap_add:
       - CAP_NET_ADMIN
