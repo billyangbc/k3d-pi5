@@ -48,3 +48,21 @@ services:
     networks:
       - storage_network
     restart: always
+
+  samba:
+    image: ghcr.io/servercontainers/samba:latest
+    container_name: samba
+    restart: unless-stopped
+    environment:
+      GROUP_family: 1500
+
+      ACCOUNT_bill: billpass
+      UID_bill: 1000
+      GROUP_bill: family
+      SAMBA_VOLUME_CONFIG_shares: "[Shares]; path=/shares/data; valid users = bill; guest ok = no; read only = no; browseable = yes; force group = family"
+    volumes:
+      - ${SAMBA_LOCAL}:/shares/data
+    ports:
+      - 445:445
+    cap_add:
+      - CAP_NET_ADMIN
