@@ -27,6 +27,7 @@ services:
   #mkdir nfs-share
   #sudo mount -v -t nfs -o vers=4,port=2049 host:/ nfs-share
 
+  # http://host:9001
   minio:
     image: billyangbc/minio:debian-arm
     container_name: minio-server
@@ -50,6 +51,7 @@ services:
       - storage_network
     restart: always
 
+  # smb://host/Shares
   samba:
     image: ghcr.io/servercontainers/samba:latest
     container_name: samba-server
