@@ -1,0 +1,15 @@
+---
+k3d_cluster:
+  children:
+    pi-nas: # change to your host name
+      hosts:
+        192.168.100.203: # change to your host ip
+    pi5: # change to your host name
+      hosts:
+        192.168.100.205: # change to your host ip
+
+  # Required Vars
+  vars:
+    #ansible_port: 22
+    ansible_user: debian # change to your user
+    work_dir: ~/workspace

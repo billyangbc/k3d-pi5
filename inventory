@@ -1,9 +1,0 @@
-[pi5]
-192.168.100.205 ansible_user=bill
-[pi5:vars]
-work_dir="~/workspace"
-
-[pi-nas]
-192.168.100.203 ansible_user=bill
-[pi-nas:vars]
-work_dir="~/workspace"
