@@ -42,53 +42,6 @@ ls -la /media/bill/Data-4TB/k3dvol/
 
 ## Tips:
 
-### 1. Docker Desktop is not able to start on ubuntu 24.04
-When build docker for multiple architecture on ubuntu, `Docker Desktop` will be needed.
-However, when upgrade to ubuntu 24.04, the `Docker Desktop` is not able to start.
-Here is a workaround:
-
-```sh
-sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-systemctl --user restart docker-desktop
-```
-
-### 2. ssh id copy and remove
-You can use `ssh-copy-id` to copy local ssh public key to remote server, so that you can login without password, here are some tips.
-
-If you have done a ssh-copy-id like:
-```sh
-remote='user@email.com'
-ssh-copy-id -i $remote
-```
-
-So you can access this remote machine without using a password:
-```sh
-ssh $remote
-```
-
-To remove the public key from remote server,
-```sh
-idssh=$(awk '{print $2}' ~/.ssh/id_rsa.pub)
-ssh $remote "sed -i '\#$idssh#d' .ssh/authorized_keys"
-```
-
-### 3. Initialize pass issue for `dockr login`
-```sh
-pass remove -rf docker-credential-helpers
-#OR    rm -rf ~/.password-store/docker-credential-helpers
-gpg --generate-key
-gpg --full-gen-key
-pass init <generated gpg-id public key>
-```
-
-### 4. Build docker image for multiple platform (https://www.docker.com/blog/multi-arch-images/)
-```sh
-docker buildx build --platform linux/arm64 -t billyangbc/hellodocker:bookworm-arm64 -f Dockerfile . --no-cache
-#push to docker.io:
-docker login
-docker build -t <username>/<repo>:<tag> .
-docker push <username>/<repo>:<tag>
-```
 
 ### install helm
 ```sh
