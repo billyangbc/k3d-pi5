@@ -32,10 +32,17 @@ vim ~/.ssh/authorized_keys
 # paste copied content
 ```
 
-## step 3: test and run ansible
+## step 3: test with ssh
 
 For testing:
 ```sh
 ssh user@hostname.example.com
 # note: no password is needed
+```
+
+## (Optional): remove public key from remote host
+To remove the public key from remote server, use:
+```sh
+idssh=$(awk '{print $2}' ~/.ssh/id_ed25519.pub)
+ssh user@hostname.example.com "sed -i '\#$idssh#d' .ssh/authorized_keys"
 ```
