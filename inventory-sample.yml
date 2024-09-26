@@ -1,7 +1,7 @@
 ---
 k3d_cluster:
   children:
-    pi-nas: # change to your host name
+    pi_nas: # change to your host name
       hosts:
         192.168.100.203: # change to your host ip
     pi5: # change to your host name
