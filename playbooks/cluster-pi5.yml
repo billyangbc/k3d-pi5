@@ -2,7 +2,7 @@
 ---
 - hosts: pi5
   roles:
-    - { role: bootstrap, become: yes }
+    - { role: bootstrap, become: True }
     - cluster
 
 #ansible-playbook -i inventory cluster-pi5.yml --ask-pass --ask-become-pass
