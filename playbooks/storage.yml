@@ -1,8 +1,0 @@
-# service.yml to run docker-compose on pi5
----
-- hosts: pi-nas
-  roles:
-    - storage
-
-# use:
-#ansible-playbook -i inventory storage.yml --ask-pass --ask-become-pass

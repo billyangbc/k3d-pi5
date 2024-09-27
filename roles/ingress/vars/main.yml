@@ -1,3 +1,0 @@
----
-# vars
-k8s_file: "ingress.yml"

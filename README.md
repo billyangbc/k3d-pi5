@@ -80,3 +80,10 @@ kubectl -n kubernetes-dashboard get sa
 kubectl -n kubernetes-dashboard create token kubernetes-dashboard-web
 ```
 
+# references:
+https://www.microcharon.com/tech/368.html
+https://eliu.github.io/2021/03/25/run-local-k8s-using-k3d/
+https://www.cnblogs.com/haogj/p/16397876.html
+https://cloud.tencent.com/developer/article/1963647
+https://wiki.zguishen.com/Kubernetes/k3d/
+http://liuyang1.com/blog/44

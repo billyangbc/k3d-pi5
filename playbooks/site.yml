@@ -1,0 +1,12 @@
+---
+- name: Cloud local bootstrap
+  hosts: cloud_local
+  gather_facts: true
+  become: true
+  roles:
+    - role: bootstrap
+
+# use:
+#ansible-playbook -i inventory.yml playbooks/site.yml --ask-pass --ask-become-pass
+# or:
+#ansible-playbook -i inventory.yml playbooks/site.yml

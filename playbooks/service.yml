@@ -1,8 +1,0 @@
-# service.yml to run docker-compose on pi5
----
-- hosts: pi5
-  roles:
-    - service
-
-# use:
-#ansible-playbook -i inventory service.yml --ask-pass --ask-become-pass

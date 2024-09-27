@@ -1,15 +1,37 @@
 ---
-# enable cgroup memory
-## NOTE: if not set cgroup, cluster will hang at creating servers
-# - name: Set cgroup on Raspberry pi (arm64)
-#   lineinfile:
-#     path: /boot/firmware/cmdline.txt
-#     regexp: '^(.*rootwait.*)$' # rootfstype=ext4 fsck.repair=yes rootwait quiet splash
-#     line: '\1 cgroup_memory=1 cgroup_enable=memory'
-#     backrefs: true
-#   when: ( ansible_facts.architecture is search "arm" )
-#   notify:
-#     - reboot-server
+- name: Test for raspberry pi /proc/cpuinfo
+  ansible.builtin.command: grep -E "Raspberry Pi|BCM2708|BCM2709|BCM2835|BCM2836" /proc/cpuinfo
+  register: grep_cpuinfo_raspberrypi
+  failed_when: false
+  changed_when: false
+
+- name: Test for raspberry pi /proc/device-tree/model
+  ansible.builtin.command: grep -E "Raspberry Pi" /proc/device-tree/model
+  register: grep_device_tree_model_raspberrypi
+  failed_when: false
+  changed_when: false
+
+- name: Set raspberry_pi fact to true
+  ansible.builtin.set_fact:
+    raspberry_pi: true
+  when:
+    grep_cpuinfo_raspberrypi.rc == 0 or grep_device_tree_model_raspberrypi.rc == 0
+
+- name: Set detected_distribution to Raspbian
+  ansible.builtin.set_fact:
+    detected_distribution: Raspbian
+  when: >
+    raspberry_pi|default(false) and
+    ( ansible_facts.lsb.id|default("") == "Raspbian" or
+      ansible_facts.lsb.description|default("") is match("[Rr]aspbian.*") )
+
+- name: Execute OS related tasks on the Raspberry Pi
+  ansible.builtin.include_tasks: "{{ item }}"
+  with_first_found:
+    - "os/{{ detected_distribution }}.yml"
+    - "os/default.yml"
+  when:
+    - raspberry_pi|default(false)
 
 # install apt packages
 - name: Install aptitude
@@ -34,40 +56,4 @@
     name: "{{ ansible_user }}"
     groups: docker
     append: yes
-# install kubectl if not existing
-- name: Check if kubectl is installed
-  stat:
-    path: "{{ kubectl_bin }}"
-  register: kubectl
-- name: Get kubectl version
-  command: curl -L -s https://dl.k8s.io/release/stable.txt
-  register: kubectl_version
-  when: kubectl.stat.exists == False
-- name: Print the kubectl version
-  debug:
-    var: kubectl_version.stdout
-  when: kubectl.stat.exists == False
-- name: Download the latest kubectl release
-  uri:
-    url: "https://dl.k8s.io/release/{{ kubectl_version.stdout }}/bin/linux/arm64/kubectl"
-    dest: "{{ kubectl_bin }}"
-    mode: '0755'
-  when: kubectl.stat.exists == False
-# install k3d if not existing
-- name: Check if k3d is installed
-  stat:
-    path: "{{ k3d_bin }}"
-  register: k3d
-- name: Install k3d if not existing
-  get_url: 
-    url: https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh
-    dest: /tmp/k3d-installer.sh
-    mode: '0755'
-  when: k3d.stat.exists == False
-- name: Install k3d
-  shell: /tmp/k3d-installer.sh
-  when: k3d.stat.exists == False
-- name: Remove the k3d-installer.sh
-  file: 
-    path: /tmp/k3d-installer.sh 
-    state: absent
+  notify: Reboot Pi
