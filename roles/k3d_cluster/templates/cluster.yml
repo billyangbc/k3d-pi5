@@ -10,7 +10,7 @@ kubeAPI: # same as `--api-port HOSTNAME:6445` (where the name would resolve to 1
   hostIP: "0.0.0.0" # where the Kubernetes API will be listening on
   hostPort: "6445" # where the Kubernetes API listening port will be mapped to on your host system
 ports:
-  # same as `--port '8880:80@loadbalancer'`
+  # same as `--port '80:80@loadbalancer'`
   # after cluster is created, use `k3d cluster edit {{ cluster_name }} --port-add 8081:81@loadbalancer`
   - port: 80:80
     nodeFilters:
@@ -25,7 +25,7 @@ ports:
     nodeFilters:
       - server:*
 env:
-  - envVar: bar=baz # for testing, same as `--env 'bar=baz@server:0'`
+  - envVar: foo=bar # for testing, same as `--env 'foo=bar@server:0'`
     nodeFilters:
       - server:0
 volumes: # repeatable flags are represented as YAML lists
@@ -51,7 +51,7 @@ options:
           - agent:*
       - label: env=dev # same as `--k3s-node-label 'env=dev@agent:1'` -> this results in a kubernetes node label
         nodeFilters:
-          - agent:1
+          - agent:0
     extraArgs: # additional arguments passed to the `k3s server|agent` command; same as `--k3s-arg`
       - arg: "--tls-san={{ public_ip }}" # add public IP for remote access
         nodeFilters:
