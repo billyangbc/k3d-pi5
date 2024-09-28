@@ -1,0 +1,26 @@
+- name: Cloud local bootstrap
+  hosts: cluster
+  gather_facts: true
+  roles:
+    - {role: bootstrap, become: True}
+    - {role: k3d_install, become: True}
+
+- name: Create Service
+  hosts: pi5
+  roles:
+    - {role: service, become: False}
+
+- name: Create k3d Cluster
+  hosts: pi_ai
+  roles:
+    - {role: k3d_cluster, become: False}
+
+- name: Create Storage 
+  hosts: pi_nas
+  roles:
+    - {role: storage, become: False}
+
+# use:
+#ansible-playbook -i inventory.yml playbooks/cloud.yml --ask-pass --ask-become-pass
+# or:
+#ansible-playbook -i inventory.yml playbooks/cloud.yml
