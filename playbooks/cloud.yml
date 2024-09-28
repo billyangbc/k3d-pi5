@@ -21,6 +21,6 @@
     - {role: storage, become: False}
 
 # use:
-#ansible-playbook -i inventory.yml playbooks/cloud.yml --ask-pass --ask-become-pass
+#ansible-playbook -i inventory playbooks/cloud.yml --ask-pass --ask-become-pass
 # or:
-#ansible-playbook -i inventory.yml playbooks/cloud.yml
+#ansible-playbook -i inventory playbooks/cloud.yml

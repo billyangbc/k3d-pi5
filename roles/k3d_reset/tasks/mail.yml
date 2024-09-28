@@ -1,0 +1,15 @@
+# check if cluster existing
+- name: Check if k3d cluster {{ cluster_name }} is existing
+  shell: |
+    k3d cluster list | grep -w '{{ cluster_name }}'
+  register: k3d_cluster
+  failed_when: k3d_cluster.rc != 1 and k3d_cluster.rc != 0
+- name: debug k3d_cluster
+  debug:
+    msg: "k3d_cluster.rc = {{ k3d_cluster.rc }}"
+
+# reset the cluster if existing
+- name: Reset k3d cluster {{ cluster_name }}
+  shell: |
+    k3d cluster delete {{ cluster_name }}
+  when: k3d_cluster.rc == 0
