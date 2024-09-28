@@ -1,0 +1,18 @@
+- name: Cloud local bootstrap
+  hosts: pi_ai
+  gather_facts: true
+  become: True
+  roles:
+    - role: bootstrap
+    - role: k3d_install
+
+- name: Create k3d Cluster
+  hosts: pi_ai
+  become: False
+  roles:
+    - role: k3d_cluster
+
+# use:
+#ansible-playbook -i inventory.yml playbooks/k3d_cluster.yml --ask-pass --ask-become-pass
+# or:
+#ansible-playbook -i inventory.yml playbooks/k3d_cluster.yml

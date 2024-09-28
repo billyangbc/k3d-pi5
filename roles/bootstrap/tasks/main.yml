@@ -1,4 +1,5 @@
 ---
+# detect raspberry pi and setup raspberry pi related tasks
 - name: Test for raspberry pi /proc/cpuinfo
   ansible.builtin.command: grep -E "Raspberry Pi|BCM2708|BCM2709|BCM2835|BCM2836" /proc/cpuinfo
   register: grep_cpuinfo_raspberrypi
@@ -33,7 +34,7 @@
   when:
     - raspberry_pi|default(false)
 
-# install apt packages
+# install required apt packages
 - name: Install aptitude
   apt:
     name: aptitude

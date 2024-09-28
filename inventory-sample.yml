@@ -1,4 +1,17 @@
 ---
+# inventory ini format
+# [pi5]
+# 192.168.100.205 ansible_user=bill
+# [pi5:vars]
+# work_dir="~/workspace"
+# 
+# [pi_nas]
+# 192.168.100.203 ansible_user=bill
+# [pi_nas:vars]
+# work_dir="~/workspace"
+
+---
+# inventory yml format
 k3d_cluster:
   children:
     pi_nas: # change to your host name
@@ -13,3 +26,10 @@ k3d_cluster:
     #ansible_port: 22
     ansible_user: debian # change to your user
     work_dir: ~/workspace
+
+#
+# check the inventory file
+# The -y flag gives yaml output. Omitting the flag gives json.
+# ansible-inventory -i inventory -y --list
+# OR
+# ansible-inventory -i inventory.yml -y --list

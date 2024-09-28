@@ -1,0 +1,6 @@
+---
+# cluster
+k3d_image: "rancher/k3s:v1.31.1-k3s1-arm64"
+cluster_file: "cluster.yml"
+cluster_servers: 3
+cluster_agents: 5

@@ -1,0 +1,4 @@
+---
+# k3d
+k3d_bin: "/usr/local/bin/k3d"
+kubectl_bin: "/usr/local/bin/kubectl"

@@ -3,4 +3,5 @@ venv
 .vscode
 .vagrant
 inventory.yml
+inventory.ini
 inventory

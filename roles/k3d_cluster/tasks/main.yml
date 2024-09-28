@@ -1,0 +1,50 @@
+---
+# copy required config files to remote
+- name: ensures destination dir exists
+  file: 
+    path: "{{ work_dir }}"
+    state: directory
+# add files to destination dir
+- name: Copy config files to remote
+  template:
+    src: "{{ cluster_file }}"
+    dest: "{{ work_dir }}/{{ cluster_file }}"
+    force: yes
+
+# check if cluster existing
+- name: Check if k3d cluster {{ cluster_name }} is existing
+  shell: |
+    k3d cluster list | grep -w '{{ cluster_name }}'
+  register: k3d_cluster
+  failed_when: k3d_cluster.rc != 1 and k3d_cluster.rc != 0
+- name: debug k3d_cluster
+  debug:
+    msg: "k3d_cluster.rc = {{ k3d_cluster.rc }}"
+# create cluster if not existing
+- name: Create k3d cluster {{ cluster_name }} with file {{ work_dir }}/{{ cluster_file }}
+  shell:
+    cmd: |
+      k3d cluster create --config {{ work_dir }}/{{ cluster_file }}
+  when: k3d_cluster.rc == 1 # echo $?
+# restart the cluster if existing
+- name: Restart k3d cluster {{ cluster_name }}
+  shell: |
+    k3d cluster stop {{ cluster_name }} && k3d cluster start {{ cluster_name }}
+  when: k3d_cluster.rc == 0
+- name: Pause for 10 seconds for service start
+  pause:
+    seconds: 10
+# make sure the kube-config file has content (avoid to get empty file)
+- name: Generate kube-config file
+  shell:
+    cmd: k3d kubeconfig get --all > {{ lookup('env', 'HOME') }}/.kube/config
+  when: k3d_cluster.rc == 1
+# copy cluster kubeconfig file to local
+- name: debug kube config file copy
+  debug:
+    msg: "copy remote {{ lookup('env', 'HOME') }}/.kube/config to local {{ lookup('env', 'HOME') }}/.kube/config-{{ cluster_name }}"
+- name: Copy kube config to local
+  fetch:
+    src: "{{ lookup('env', 'HOME') }}/.kube/config"
+    dest: "{{ lookup('env', 'HOME') }}/.kube/config-{{ cluster_name }}"
+    flat: yes
