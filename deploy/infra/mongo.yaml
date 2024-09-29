@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: mongo
+  name: mongo
+spec:
+  ports:
+    - name: "27017"
+      port: 27017
+      targetPort: 27017
+  # update when using ingress
+  type: LoadBalancer
+  selector:
+    app: mongo
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mongo
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - env:
+            - name: MONGO_INITDB_DATABASE
+              value: mongo
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: admin
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: admin
+          image: mongo
+          name: mongo
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongo-pvc
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+      nodeSelector:
+        disk: ssd
+      restartPolicy: Always
+      volumes:
+        - name: mongo-pvc
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+  labels:
+    type: local
+    app: mongo
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /ssd/mongo
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: mongo-pvc
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
