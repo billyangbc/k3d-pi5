@@ -27,6 +27,12 @@ ports:
   - port: 5432:5432 # for PostgreSQL
     nodeFilters:
       - loadbalancer
+  - port: 6379:6379 # for Redis
+    nodeFilters:
+      - loadbalancer
+  - port: 27017:27017 # for MongoDB 
+    nodeFilters:
+      - loadbalancer
   - port: 30000-30100:30000-30100
     nodeFilters:
       - server:*
