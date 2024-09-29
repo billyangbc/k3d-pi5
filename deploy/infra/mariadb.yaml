@@ -1,0 +1,163 @@
+---
+# SSD PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mariadb-pv
+  labels:
+    type: local-ssd
+spec:
+  storageClassName: manual
+  volumeMode: Filesystem # Filesystem|Block. Filesystem is the default mode if the volume mode is not defined.
+  capacity:
+    storage: 10Gi
+  accessModes:
+    #ReadWriteOnce -- the volume can be mounted as read-write by a single node
+    #ReadOnlyMany -- the volume can be mounted read-only by many nodes
+    #ReadWriteMany -- the volume can be mounted as read-write by many nodes
+    - ReadWriteMany 
+  hostPath:
+    path: "/ssd/mariadb" # new sub-folder under cluster mount folder
+
+# create PVC
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mariadb-pvc
+spec:
+  storageClassName: manual # must match PV specification to be successfully bound together
+  accessModes:
+    - ReadWriteMany # must be compatible with the access modes supported by the PV.
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    app: mariadb
+  name: mariadb-config
+data:
+  mariadb.cnf: |
+    #
+    # These groups are read by MariaDB server.
+    # Use it for options that only the server (but not clients) should see
+
+    # this is read by the standalone daemon and embedded servers
+    [server]
+
+    # this is only for the mysqld standalone daemon
+    [mysqld]
+    skip-networking
+
+    # Galera-related settings
+    [galera]
+    # Mandatory settings
+    #wsrep_on=ON
+    #wsrep_provider=
+    #wsrep_cluster_address=
+    #binlog_format=row
+    #default_storage_engine=InnoDB
+    #innodb_autoinc_lock_mode=2
+    #
+    # Allow server to accept connections on all interfaces.
+    #
+    #bind-address=0.0.0.0
+    #
+    # Optional setting
+    #wsrep_slave_threads=1
+    #innodb_flush_log_at_trx_commit=0
+
+    # this is only for embedded server
+    [embedded]
+
+    # This group is only read by MariaDB servers, not by MySQL.
+    # If you use the same .cnf file for MySQL and MariaDB,
+    # you can put MariaDB-only options here
+    [mariadb]
+
+    # This group is only read by MariaDB-10.5 servers.
+    # If you use the same .cnf file for MariaDB of different versions,
+    # use this group for options that older servers don't understand
+    [mariadb-10.5]
+
+---
+#kubectl create service clusterip nginx --tcp=3306:3306
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb # for binding with ingress
+spec:
+  selector:
+    app: mariadb # equality of matchLabels, get target pods
+  ports:
+    - protocol: TCP
+      port: 3306 # service port
+      targetPort: 3306 # pod port
+  type: LoadBalancer
+
+---
+# mariadb-statefulset.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mariadb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      volumes:
+        - name: mariadb-storage
+          persistentVolumeClaim:
+            claimName: mariadb-pvc
+        - name: config-volume
+          configMap:
+            name: mariadb-config
+            items:
+              - key: mariadb.cnf
+                path: my-mariadb-config
+      containers:
+        - env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: admin
+            - name: MYSQL_PASSWORD
+              value: db_pass
+            - name: MYSQL_USER
+              value: db_user
+            - name: MYSQL_DATABASE
+              value: mariadb
+          image: yobasystems/alpine-mariadb
+          name: mariadb
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-storage
+            - name: config-volume
+              mountPath: /etc/my.cnf.d/mariadb-server.cnf
+              subPath: my-mariadb-config
+
+      nodeSelector:
+        disk: ssd
+      restartPolicy: Always
