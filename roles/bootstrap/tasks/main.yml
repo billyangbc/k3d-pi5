@@ -34,6 +34,14 @@
   when:
     - raspberry_pi|default(false)
 
+# update apt
+- name: Update apt repo and cache on all Debian/Ubuntu boxes
+  apt:
+    upgrade: dist
+    update_cache: yes
+    force_apt_get: yes
+    cache_valid_time: 3600
+
 # install required apt packages
 - name: Install aptitude
   apt:

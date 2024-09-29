@@ -5,13 +5,13 @@
     - {role: bootstrap, become: True}
     - {role: k3d_install, become: True}
 
-- name: Create Service
-  hosts: pi5
-  roles:
-    - {role: service, become: False}
+#- name: Create Service
+#  hosts: pi5
+#  roles:
+#    - {role: service, become: False}
 
 - name: Create k3d Cluster
-  hosts: pi_ai
+  hosts: cluster
   roles:
     - {role: k3d_cluster, become: False}
 
