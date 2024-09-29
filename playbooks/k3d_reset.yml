@@ -1,8 +1,0 @@
----
-- name: Reset the k3d cluster 
-  hosts: pi_ai
-  roles:
-    - {role: k3d_reset, become: False}
-
-# use:
-#ansible-playbook -i inventory playbooks/k3d_reset.yml

@@ -108,7 +108,7 @@ kind: Deployment
 metadata:
   name: mariadb
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mariadb
@@ -157,7 +157,6 @@ spec:
             - name: config-volume
               mountPath: /etc/my.cnf.d/mariadb-server.cnf
               subPath: my-mariadb-config
-
       nodeSelector:
         disk: ssd
       restartPolicy: Always

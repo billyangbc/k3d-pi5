@@ -15,10 +15,10 @@ ports:
   - port: 80:80
     nodeFilters:
       - loadbalancer
-  - port: 8080:8080
+  - port: 8080:8080 # for nextcloud
     nodeFilters:
       - loadbalancer
-  - port: 8089:8089
+  - port: 8089:8089 # for nextcloud
     nodeFilters:
       - loadbalancer
   - port: 3306:3306 # for MySQL/MariaDB
