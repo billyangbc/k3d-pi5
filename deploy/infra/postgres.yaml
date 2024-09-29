@@ -1,0 +1,135 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: postgres
+  name: postgres
+spec:
+  ports:
+    - name: "5432"
+      port: 5432
+      targetPort: 5432
+  # update when using ingress
+  type: LoadBalancer
+  selector:
+    app: postgres
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: postgres
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - env:
+            - name: PGUSER
+              value: db_user
+            - name: POSTGRES_DB
+              value: postgresql
+            - name: POSTGRES_PASSWORD
+              value: db_pass
+            - name: POSTGRES_USER
+              value: db_user
+          image: ankane/pgvector
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready -d postgresql -U db_user
+            failureThreshold: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+          name: postgres
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-pvc
+            - mountPath: /docker-entrypoint-initdb.d/init.sql
+              name: postgres-cm
+              subPath: init.sql
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+      nodeSelector:
+        disk: ssd
+      restartPolicy: Always
+      volumes:
+        - name: postgres-pvc
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+        - configMap:
+            items:
+              - key: postgres-init.sql
+                path: init.sql
+            name: postgres-cm
+          name: postgres-cm
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    use-subpath: "true"
+  labels:
+    app: postgres
+  name: postgres-cm
+data:
+  postgres-init.sql: |
+    CREATE EXTENSION IF NOT EXISTS vector;
+
+    CREATE TABLE IF NOT EXISTS embeddings (
+      id SERIAL PRIMARY KEY,
+      embedding vector,
+      text text,
+      created_at timestamptz DEFAULT now()
+    );
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+    app: postgres
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /ssd/postgres
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  labels:
+    app: postgres
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
