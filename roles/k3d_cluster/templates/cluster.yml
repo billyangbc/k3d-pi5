@@ -10,9 +10,12 @@ kubeAPI: # same as `--api-port HOSTNAME:6445` (where the name would resolve to 1
   hostIP: "0.0.0.0" # where the Kubernetes API will be listening on
   hostPort: "6445" # where the Kubernetes API listening port will be mapped to on your host system
 ports:
-  # same as `--port '80:80@loadbalancer'`
+  # k3d cluster create -p "80:80@loadbalancer" -p "443:443@loadbalancer"
   # after cluster is created, use `k3d cluster edit {{ cluster_name }} --port-add 8081:81@loadbalancer`
   - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
     nodeFilters:
       - loadbalancer
   - port: 8080:8080 # for nextcloud
@@ -68,9 +71,10 @@ options:
       - arg: "--tls-san={{ public_ip }}" # add public IP for remote access
         nodeFilters:
           - server:*
-      - arg: --disable=traefik
-        nodeFilters:
-        - server:*
+      #k3s comes by default with traefik ingress setup and configured to be on port 80 (and maybe 433 also)
+      #- arg: --disable=traefik
+      #  nodeFilters:
+      #  - server:*
   kubeconfig:
     updateDefaultKubeconfig: true # add new cluster to your default Kubeconfig; same as `--kubeconfig-update-default` (default: true)
     switchCurrentContext: true # also set current-context to the new cluster's context; same as `--kubeconfig-switch-context` (default: true)
