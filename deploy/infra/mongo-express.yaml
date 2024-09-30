@@ -5,14 +5,12 @@ metadata:
     service: mongo-express
   name: mongo-express
 spec:
-  ports:
-    - name: "10081"
-      port: 10081
-      targetPort: 8081
-  # update when using ingress
-  type: LoadBalancer
   selector:
     app: mongo-express
+  ports:
+    - protocol: TCP
+      port: 10081 # service port
+      targetPort: 8081 # pod port
 
 ---
 apiVersion: apps/v1
@@ -55,6 +53,4 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
-      nodeSelector:
-        disk: ssd
       restartPolicy: Always
