@@ -7,13 +7,15 @@ metadata:
 spec:
   ports:
     - name: "8080"
+      protocol: TCP
       port: 8080
       targetPort: 80
     - name: "8089"
+      protocol: TCP
       port: 8089
       targetPort: 443
   # update when using ingress
-  type: LoadBalancer
+#  type: LoadBalancer
   selector:
     app: nextcloud
 
@@ -42,6 +44,9 @@ spec:
               value: "1000"
             - name: PUID
               value: "1000"
+            # 'trusted_domains' in /var/www/html/config/config.php
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: "nextcloud.local 192.168.100.205:8080"
           image: nextcloud
           name: nextcloud
           ports:
