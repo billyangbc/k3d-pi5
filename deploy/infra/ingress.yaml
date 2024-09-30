@@ -4,9 +4,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-cloud-local
-  annotations:
-    kubernetes.io/ingress.class: traefik
+  namespace:  infra
 spec:
+  ingressClassName: traefik
   rules:
   - host: pi5.local
     http:

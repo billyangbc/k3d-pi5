@@ -4,6 +4,7 @@ metadata:
   labels:
     service: mongo
   name: mongo
+  namespace:  infra
 spec:
   ports:
     - name: "27017"
@@ -21,6 +22,7 @@ metadata:
   labels:
     app: mongo
   name: mongo
+  namespace:  infra
 spec:
   replicas: 1
   selector:
@@ -88,6 +90,7 @@ metadata:
   labels:
     app: mongo-pvc
   name: mongo-pvc
+  namespace:  infra
 spec:
   storageClassName: manual
   accessModes:

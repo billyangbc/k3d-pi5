@@ -4,6 +4,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-service # for binding with ingress
+  namespace:  infra
 spec:
   selector:
     app: hello-pod # equality of matchLabels, get target pods
@@ -20,6 +21,7 @@ metadata:
   name: hello-app # for binding with service
   labels:
     app: hello
+  namespace:  infra
 spec:
   replicas: 2
   selector:

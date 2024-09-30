@@ -4,6 +4,7 @@ metadata:
   labels:
     service: mongo-express
   name: mongo-express
+  namespace:  infra
 spec:
   selector:
     app: mongo-express
@@ -19,6 +20,7 @@ metadata:
   labels:
     app: mongo-express
   name: mongo-express
+  namespace:  infra
 spec:
   replicas: 1
   selector:

@@ -4,6 +4,7 @@ metadata:
   labels:
     service: nextcloud
   name: nextcloud
+  namespace:  infra
 spec:
   ports:
     - name: "8080"
@@ -26,6 +27,7 @@ metadata:
   labels:
     app: nextcloud
   name: nextcloud
+  namespace:  infra
 spec:
   replicas: 1
   selector:
@@ -44,7 +46,7 @@ spec:
               value: "1000"
             - name: PUID
               value: "1000"
-            # 'trusted_domains' in /var/www/html/config/config.php
+            # editing the 'trusted_domains' in /var/www/html/config/config.php
             - name: NEXTCLOUD_TRUSTED_DOMAINS
               value: "nextcloud.local 192.168.100.205:8080"
           image: nextcloud
@@ -87,11 +89,13 @@ spec:
     - ReadWriteOnce
   hostPath:
     path: "/ssd/nextcloud"
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: nextcloud-pvc
+  namespace:  infra
 spec:
   storageClassName: manual
   accessModes:
