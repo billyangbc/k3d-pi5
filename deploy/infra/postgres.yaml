@@ -38,7 +38,7 @@ spec:
             - name: PGUSER
               value: db_user
             - name: POSTGRES_DB
-              value: postgresql
+              value: postgresdb
             - name: POSTGRES_PASSWORD
               value: db_pass
             - name: POSTGRES_USER
@@ -47,7 +47,7 @@ spec:
           livenessProbe:
             exec:
               command:
-                - pg_isready -d postgresql -U db_user
+                - pg_isready -d postgresdb -U db_user
             failureThreshold: 5
             periodSeconds: 5
             timeoutSeconds: 5
