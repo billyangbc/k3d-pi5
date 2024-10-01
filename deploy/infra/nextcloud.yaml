@@ -53,7 +53,7 @@ spec:
               value: "1000"
             # editing the 'trusted_domains' in /var/www/html/config/config.php
             - name: NEXTCLOUD_TRUSTED_DOMAINS
-              value: "nextcloud.local 192.168.100.205:8080"
+              value: "nextcloud.local"
           image: nextcloud
           name: nextcloud
           ports:
@@ -66,11 +66,11 @@ spec:
               name: nextcloud-pvc
           resources:
             requests:
-              memory: "500Mi"
-              cpu: "500m"
-            limits:
               memory: "1Gi"
               cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "4"
       nodeSelector:
         disk: ssd
       restartPolicy: Always
