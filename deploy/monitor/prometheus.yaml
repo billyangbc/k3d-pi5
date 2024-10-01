@@ -236,7 +236,6 @@ data:
           action: replace
           target_label: kubernetes_name
 
-
 ---
 # https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/
 # https://github.com/techiescamp/kubernetes-prometheus
