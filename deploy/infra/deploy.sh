@@ -10,6 +10,8 @@
 #
 # Don't forget to change kubectl to your production Kubernetes instance
 #
+# export KUBECONFIG=~/.kube/config-pi5
+# export KUBECONFIG=~/.kube/config-ai
 kubectl apply -f ns.yaml
 kubectl apply -f mariadb.yaml
 kubectl apply -f mongo-express.yaml 
