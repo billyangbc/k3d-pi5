@@ -87,3 +87,41 @@ https://www.cnblogs.com/haogj/p/16397876.html
 https://cloud.tencent.com/developer/article/1963647
 https://wiki.zguishen.com/Kubernetes/k3d/
 http://liuyang1.com/blog/44
+
+  k3d is based on k3s and deploys the traefik ingress controller by default along with a basic load balancer implementation.
+  A nice trick i use all the time is to create a cluster that forwards your local ports 80 and 443 to the load balancer in front of traefik. That way you can create ingresses that point to localhost or *.localhost and it will just work.
+
+
+docker run -t -d -p 9980:9980 -e "extra_params=--o:ssl.enable=false" collabora/code
+docker run -p 0.0.0.0:9980:9980 -e "domain=pi5\\.dev\\.local" --cap-add MKNOD collabora/code
+
+
+docker run -p 9980:9980 -e "extra_params=--o:ssl.enable=false" -e "domain=nextcloud\\.local" --cap-add MKNOD collabora/code
+
+in docker `/etc/coolwsd/coolwsd.xml`,  add
+```
+<host desc="Regex pattern of hostname to allow or deny." allow="true">127\.0\.0\.1</host>
+<host desc="Regex pattern of hostname to allow or deny." allow="true">owncloud\.myserver\.com</host>
+```
+echo '<host desc="Regex pattern of hostname to allow or deny." allow="true">nextcloud.local</host>' >> /etc/coolwsd/coolwsd.xml
+
+
+docker run -p 9980:9980 -e "extra_params=--o:ssl.enable=false" -e 'domain=192.168.100.205' --cap-add MKNOD collabora/code
+
+
+## Quick Tryout Nextcloud Docker
+https://www.collaboraonline.com/quick-tryout-nextcloud-docker/
+You can try CODE in 5 minutes with Nextcloud following these basic steps:
+
+    Find out the IP address of your computer, e.g. 192.168.100.20
+    Run Nextcloud from docker:
+    docker run -d -p 80:80 nextcloud
+    In your browser go to http://192.168.100.20 and set up your Nextcloud.
+    In Nextcloud go to Apps – Office and Text, and install Nextcloud Office (Collabora Online) app.
+    Run CODE from docker:
+    docker run -t -d -p 9980:9980 -e "extra_params=--o:ssl.enable=false" collabora/code
+    Set up the Collabora Online server in Nextcloud Settings – Collabora Online to http://192.168.100.20:9980
+
+Note 1: Of course, this is only good for a quick look at the features, it is not for production by any means.
+
+Note 2: Do not use localhost or 127.0.0.1 instead of IP address of your computer, because these addresses do not resolve from the containers. This means not only not using it for the address of Collabora Online configured in Nextcloud, but also for the URL you connect to in the browser to test.

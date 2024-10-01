@@ -40,6 +40,11 @@ spec:
       labels:
         app: nextcloud
     spec:
+      # add this section for built-in Collabora CODE server in Nextcloud
+      hostAliases:
+      - ip: "192.168.100.205"
+        hostnames:
+        - nextcloud.local
       containers:
         - env:
             - name: PGID
