@@ -1,0 +1,31 @@
+---
+# ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-cloud-local
+  namespace:  monitor
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: prometheus.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus-service # service name
+            port:
+              number: 9090
+
+  - host: grafana.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana # service name
+            port:
+              number: 3000

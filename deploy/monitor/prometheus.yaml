@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-server
-  namespace: infra
+  namespace: monitor
   labels:
     app: prometheus-server
 spec:
@@ -50,7 +50,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-service
-  namespace: infra
+  namespace: monitor
   annotations:
       prometheus.io/scrape: 'true'
       prometheus.io/port:   '9090'
@@ -95,7 +95,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: infra
+  namespace: monitor
 
 ---
 apiVersion: v1
@@ -104,7 +104,7 @@ metadata:
   name: prometheus-server-conf
   labels:
     name: prometheus-server-conf
-  namespace: infra
+  namespace: monitor
 data:
   prometheus.rules: |-
     groups:
@@ -128,7 +128,7 @@ data:
       - scheme: http
         static_configs:
         - targets:
-          - "alertmanager.infra.svc:9093"
+          - "alertmanager.monitor.svc:9093"
     scrape_configs:
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
@@ -190,7 +190,7 @@ data:
           target_label: kubernetes_pod_name
       - job_name: 'metrics-server'
         static_configs:
-          - targets: ['prometheus-service.infra.svc:9090']    
+          - targets: ['prometheus-service.monitor.svc:9090']    
       - job_name: 'kubernetes-cadvisor'
         scheme: https
         tls_config:
