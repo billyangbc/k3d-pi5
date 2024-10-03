@@ -14,6 +14,7 @@
   hosts: cluster
   roles:
     - {role: k3d_cluster, become: False}
+    - {role: service_docker, become: False}
 
 - name: Create Storage 
   hosts: pi_nas
