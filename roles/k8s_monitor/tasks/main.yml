@@ -6,7 +6,7 @@
 
 - name: copy k8s files
   template:
-    src: files/{{ item }}
+    src: templates/{{ item }}
     dest: "{{ work_dir }}/k8s_monitor/{{ item }}"
     force: yes
   loop: "{{ k8s_files }}"
