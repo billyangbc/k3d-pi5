@@ -1,5 +1,5 @@
 ---
-# inventory ini format
+# inventory sample ini format
 # 
 # [all:vars]
 # work_dir="~/workspace/ansible"
@@ -38,7 +38,7 @@
 # host_path_ssd="/media/bill/SSD-Stick/k3dvol"
 
 ---
-# inventory yml format
+# inventory sample file in yml format
 k3d_cluster:
   children:
     pi_nas: # change to your host name
