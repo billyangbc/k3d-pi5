@@ -5,9 +5,6 @@
     - {role: bootstrap, become: True}
     - {role: k3d_install, become: True}
 
-#  roles:
-#    - {role: service, become: False}
-
 - name: Create k3d Cluster
   hosts: cluster
   roles:
@@ -32,6 +29,20 @@
         k8s_namespace: infra
         nextcloud_ip: 192.168.100.205
         nextcloud_host: nextcloud.local
+
+# create monitor in k8s cluster
+- name: Create monitor in k8s cluster
+  hosts: pi5
+  roles:
+    - role: k8s_monitor
+      become: False
+      vars:
+        k8s_files:
+          - ns.yaml
+          - grafana.yaml
+          - prometheus.yaml
+          - ingress.yaml
+        k8s_namespace: monitor
 
 - name: Create Storage 
   hosts: pi_nas

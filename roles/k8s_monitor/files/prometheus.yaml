@@ -1,9 +1,8 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-server
-  namespace: monitor
+  namespace: {{ k8s_namespace }}
   labels:
     app: prometheus-server
 spec:
@@ -50,7 +49,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-service
-  namespace: monitor
+  namespace: {{ k8s_namespace }}
   annotations:
       prometheus.io/scrape: 'true'
       prometheus.io/port:   '9090'
@@ -83,6 +82,7 @@ rules:
   verbs: ["get", "list", "watch"]
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -95,7 +95,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
-  namespace: monitor
+  namespace: {{ k8s_namespace }}
 
 ---
 apiVersion: v1
@@ -104,7 +104,7 @@ metadata:
   name: prometheus-server-conf
   labels:
     name: prometheus-server-conf
-  namespace: monitor
+  namespace: {{ k8s_namespace }}
 data:
   prometheus.rules: |-
     groups:
@@ -128,7 +128,7 @@ data:
       - scheme: http
         static_configs:
         - targets:
-          - "alertmanager.monitor.svc:9093"
+          - "alertmanager.{{ k8s_namespace }}.svc:9093"
     scrape_configs:
       - job_name: 'node-exporter'
         kubernetes_sd_configs:
@@ -190,7 +190,7 @@ data:
           target_label: kubernetes_pod_name
       - job_name: 'metrics-server'
         static_configs:
-          - targets: ['prometheus-service.monitor.svc:9090']    
+          - targets: ['prometheus-service.{{ k8s_namespace }}.svc:9090']    
       - job_name: 'kubernetes-cadvisor'
         scheme: https
         tls_config:
