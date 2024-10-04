@@ -32,3 +32,10 @@ Merge the content of new kube config into local kube config (~/.kube/config),the
 ```bash
 kubectl get nodes -o wide
 ```
+
+## Screenshot
+
+
+![Dashboard 1](docs/assets/home-lab-dashboard-1.png)
+
+![Dashboard 2](docs/assets/home-lab-dashboard-2.png)

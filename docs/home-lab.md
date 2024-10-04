@@ -39,8 +39,3 @@
    Grafana
 
 ![Architecture](assets/home-lab-pis.png)
-
-
-![Dashboard 1](assets/home-lab-dashboard-1.png)
-
-![Dashboard 2](assets/home-lab-dashboard-2.png)
