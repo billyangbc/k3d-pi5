@@ -4,7 +4,7 @@ metadata:
   labels:
     service: postgres
   name: postgres
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   ports:
     - name: "5432"
@@ -22,7 +22,7 @@ metadata:
   labels:
     app: postgres
   name: postgres
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   replicas: 1
   selector:
@@ -93,7 +93,7 @@ metadata:
   labels:
     app: postgres
   name: postgres-cm
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 data:
   postgres-init.sql: |
     CREATE EXTENSION IF NOT EXISTS vector;
@@ -129,7 +129,7 @@ metadata:
   name: postgres-pvc
   labels:
     app: postgres
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   storageClassName: manual
   accessModes:

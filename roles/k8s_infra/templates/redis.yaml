@@ -4,7 +4,7 @@ metadata:
   labels:
     service: redis
   name: redis
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   ports:
     - name: "6379"
@@ -22,7 +22,7 @@ metadata:
   labels:
     app: redis
   name: redis
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   replicas: 1
   selector:
@@ -83,7 +83,7 @@ metadata:
   name: redis-pvc
   labels:
     app: redis
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   storageClassName: manual
   accessModes:

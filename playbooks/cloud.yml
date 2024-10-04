@@ -5,8 +5,6 @@
     - {role: bootstrap, become: True}
     - {role: k3d_install, become: True}
 
-#- name: Create Service
-#  hosts: pi5
 #  roles:
 #    - {role: service, become: False}
 
@@ -14,7 +12,26 @@
   hosts: cluster
   roles:
     - {role: k3d_cluster, become: False}
-    - {role: service_docker, become: False}
+
+# create infra in k8s cluster
+- name: Create infra namespace in k8s cluster
+  hosts: pi5
+  roles:
+    - role: k8s_infra
+      become: False
+      vars:
+        k8s_files:
+          - ns.yaml
+          - postgres.yaml
+          - redis.yaml
+          - mariadb.yaml
+          - mongo.yaml
+          - mongo-express.yaml
+          - nextcloud.yaml
+          - ingress.yaml
+        k8s_namespace: infra
+        nextcloud_ip: 192.168.100.205
+        nextcloud_host: nextcloud.local
 
 - name: Create Storage 
   hosts: pi_nas

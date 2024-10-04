@@ -25,7 +25,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mariadb-pvc
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   storageClassName: manual # must match PV specification to be successfully bound together
   accessModes:
@@ -43,7 +43,7 @@ metadata:
   labels:
     app: mariadb
   name: mariadb-config
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 data:
   mariadb.cnf: |
     #
@@ -94,7 +94,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mariadb # for binding with ingress
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   selector:
     app: mariadb # equality of matchLabels, get target pods
@@ -110,7 +110,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mariadb
-  namespace:  infra
+  namespace: {{ k8s_namespace }} # infra
 spec:
   replicas: 1
   selector:

@@ -1,0 +1,18 @@
+# make sure the k8s_infra folder exists
+- name: ensures destination dir exists
+  file: 
+    path: "{{ work_dir }}/k8s_infra"
+    state: directory
+
+- name: copy k8s files
+  template:
+    src: templates/{{ item }}
+    dest: "{{ work_dir }}/k8s_infra/{{ item }}"
+    force: yes
+  loop: "{{ k8s_files }}"
+
+- name: Create and start k8s infra
+  shell:
+    chdir: "{{ work_dir }}/k8s_infra"
+    cmd: kubectl apply -f {{ item }}
+  loop: "{{ k8s_files }}"
