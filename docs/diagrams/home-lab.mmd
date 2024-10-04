@@ -1,0 +1,20 @@
+% mermaid chard for homelab config
+
+graph TD
+
+    subgraph Raspberry Pi 2
+        A[(Hard Disk)] <--> B[Minio Server]
+        A <--> N[NFS Server]
+    end
+
+    subgraph Raspberry Pi 5
+        C[(SSD storage)] <--> D[pi5 cluster]
+        D --> E[PostgreSQL]
+        D --> F[MariaDB]
+        D --> G[MongoDB]
+        D --> H[Redis]
+        D --> I[Nextcloud]
+        D --> J[Prometheus]
+        J --> K[Grafana]
+        D --> K
+    end
