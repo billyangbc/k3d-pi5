@@ -8,7 +8,8 @@
 - name: Create k3d Cluster
   hosts: cluster
   roles:
-    - {role: k3d_cluster, become: False}
+    - role: k3d_cluster
+      become: False
 
 # create infra in k8s cluster
 - name: Create infra namespace in k8s cluster
