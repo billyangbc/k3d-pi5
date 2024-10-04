@@ -1,14 +1,41 @@
 ---
 # inventory ini format
-# [pi5]
-# 192.168.100.205 ansible_user=bill
-# [pi5:vars]
-# work_dir="~/workspace"
+# 
+# [all:vars]
+# work_dir="~/workspace/ansible"
+# 
+# [storage:children]
+# pi2
+# pi_nas
+# 
+# [cluster:children]
+# pi5
+# pi_ai
+# 
+# [pi2]
+# 192.168.100.201 ansible_user=bill
 # 
 # [pi_nas]
 # 192.168.100.203 ansible_user=bill
-# [pi_nas:vars]
-# work_dir="~/workspace"
+# 
+# [pi5]
+# 192.168.100.205 ansible_user=bill
+# [pi5:vars]
+# # those variables are binded to host
+# cluster_host="pi5.local"
+# cluster_name="pi5"
+# cluster_servers="1"
+# cluster_agents="3"
+# host_path_ssd="/media/bill/SSD-DATA/k3dvol"
+# 
+# [pi_ai]
+# 192.168.100.207 ansible_user=bill
+# [pi_ai:vars]
+# cluster_host="ai.local"
+# cluster_name="ai"
+# cluster_servers="3"
+# cluster_agents="5"
+# host_path_ssd="/media/bill/SSD-Stick/k3dvol"
 
 ---
 # inventory yml format
