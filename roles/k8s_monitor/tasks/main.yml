@@ -1,19 +1,19 @@
-# make sure the k8s_monitor folder exists
+# make sure the {{ k8s_dir }} folder exists
 - name: ensures destination dir exists
   file: 
-    path: "{{ work_dir }}/k8s_monitor"
+    path: "{{ work_dir }}/{{ k8s_dir }}"
     state: directory
 
 - name: copy k8s files
   template:
     src: templates/{{ item }}
-    dest: "{{ work_dir }}/k8s_monitor/{{ item }}"
+    dest: "{{ work_dir }}/{{ k8s_dir }}/{{ item }}"
     force: yes
   loop: "{{ k8s_files }}"
 
 - name: Create and start k8s monitor
   shell:
-    chdir: "{{ work_dir }}/k8s_monitor"
+    chdir: "{{ work_dir }}/{{ k8s_dir }}"
     cmd: kubectl apply -f {{ item }}
   loop: "{{ k8s_files }}"
 
