@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    kubernetes.io/metadata.name: {{ k8s_namespace }}
+  name: {{ k8s_namespace }}
+spec:
+  finalizers:
+  - kubernetes
+status:
+  phase: Active

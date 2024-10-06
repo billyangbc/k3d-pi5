@@ -28,6 +28,7 @@
           - nextcloud.yaml
           - ingress.yaml
         k8s_namespace: infra
+        k8s_dir: k8s_infra
         nextcloud_ip: 192.168.100.205
         nextcloud_host: nextcloud.local
 
@@ -44,6 +45,23 @@
           - prometheus.yaml
           - ingress.yaml
         k8s_namespace: monitor
+        k8s_dir: k8s_monitor
+
+# setup longhorn storage in k8s cluster
+- name: longhorn storage
+  hosts: pi_ai
+  roles:
+    - role: k8s_helm
+      become: False
+      vars:
+        k8s_namespace: longhorn-system
+        k8s_dir: k8s_longhorn
+        helm_chart_url: https://charts.longhorn.io
+        helm_repo_name: longhorn
+        chart_name: longhorn
+        chart_ref: longhorn/longhorn
+        k8s_files:
+          - ns.yaml
 
 - name: Create Storage 
   hosts: pi_nas
