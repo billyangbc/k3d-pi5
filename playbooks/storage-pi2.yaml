@@ -1,0 +1,10 @@
+# create storage service in pi_nas
+- name: Create Storage 
+  hosts: pi_nas
+  roles:
+    - {role: storage, become: False}
+
+# use:
+#ansible-playbook -i inventory playbooks/storage-pi2.yml --ask-pass --ask-become-pass
+# or:
+#ansible-playbook -i inventory playbooks/storage-pi2.yml

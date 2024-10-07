@@ -1,12 +1,12 @@
 - name: Cloud local bootstrap
-  hosts: cluster
+  hosts: pi5 # cluster
   gather_facts: true
   roles:
     - {role: bootstrap, become: True}
     - {role: k3d_install, become: True}
 
 - name: Create k3d Cluster
-  hosts: cluster
+  hosts: pi5 # cluster
   roles:
     - role: k3d_cluster
       become: False
@@ -107,13 +107,7 @@
 #        name: "{{ chart_name }}"
 #        chart_ref: "{{ chart_ref }}"
 
-# create storage service in pi_nas
-- name: Create Storage 
-  hosts: pi_nas
-  roles:
-    - {role: storage, become: False}
-
 # use:
-#ansible-playbook -i inventory playbooks/cloud.yml --ask-pass --ask-become-pass
+#ansible-playbook -i inventory playbooks/k3d-pi5.yml --ask-pass --ask-become-pass
 # or:
-#ansible-playbook -i inventory playbooks/cloud.yml
+#ansible-playbook -i inventory playbooks/k3d-pi5.yml
