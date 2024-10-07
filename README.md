@@ -1,3 +1,5 @@
+# (deprecated 2024-10-07)Note: this reposity will be upgraded to use k3s instead of k3d
+
 # Setup home-lab cloud environment with ansible and k3d
 
 This resposity contains instructions to setup home-lab cloud environment with ansible and k3d.
@@ -34,7 +36,6 @@ kubectl get nodes -o wide
 ```
 
 ## Screenshot
-
 
 ![Dashboard 1](docs/assets/home-lab-dashboard-1.png)
 
